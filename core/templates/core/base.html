@@ -1,0 +1,102 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="{% static 'core/css/style.css' %}"/>
+    <script src="{% static 'core/scripts/main.js' %}"></script>
+    <!-- jQuery -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <!-- semantic UI -->
+    <link rel="stylesheet" type='text/css' href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.14/semantic.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+
+    <title>Helsinki City Bike App - {% block title %}{% endblock title %}</title>
+  </head>
+  <body>
+    
+    <nav class="navbar is-link" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand navbar-addon">
+        <a class="navbar-item" href="#">
+          <img src="{% static 'core/images/CitybikeLogo_2.png' %}" alt="main logo" width="170" height="70">
+        </a>
+    
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+    
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" href="{% url 'core:index'%}">
+            Index
+          </a>
+    
+          <a class="navbar-item" href="{% url 'journeys:journeys'%}">
+            Journeys
+          </a>
+    
+          <a class="navbar-item" href="{% url 'stations:stations'%}">
+            Stations
+          </a>
+        </div>
+      
+          <div class="navbar-end">
+            <a class="navbar-link">
+              Add...
+            </a>
+     
+            <div class="navbar-dropdown">
+              <a class="navbar-item">
+                Journeys
+              </a>
+              <a class="navbar-item">
+                Stations
+              </a>
+              {% comment %}
+              <a class="navbar-item">
+                Contact
+              </a>
+              <hr class="navbar-divider">
+              <a class="navbar-item">
+                Report an issue
+              </a>
+            </div> {% endcomment %}
+        </div>
+    
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="buttons">
+              <a class="js-modal-trigger button is-primary" href="{% url 'csvimport:csvimport' %}">
+                <strong>Upload CSV</strong>
+              </a>
+              {%if user.is_authenticated%}
+              <a class="button is-light" href="{% url 'admin:logout' %}">
+                Log Out
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="container is-fluid my-5">
+      {% block content %}
+      {% endblock content %}
+    </div>
+    <footer class="footer">
+      <div class="content has-text-centered">
+        <p>
+          <strong>Bulma</strong> by <a href="https://jgthms.com">Jeremy Thomas</a>. The source code is licensed
+          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
+          is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+{% extends 'core/base.html' %}
+
+{%block title%}
+Login
+{%endblock title%}
+
+{%block content%}
+
+<p>Login here</p>
+
+<h1>Kirjaudu sisään</h1>
+
+{% if form.errors %}
+<div class="mt-2 alert alert-warning alert-dismissible fade show" role="alert">
+    Lomakkeen tiedoista löytyi virhe.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+    </button>
+</div>
+{% endif %}
+<form method="POST" action="{% url 'core:login' %}">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="hidden" name="next" value="{{ request.GET.next }}">
+    <input type="submit" value="Login">
+</form>
+ 
+
+{%endblock content%}
