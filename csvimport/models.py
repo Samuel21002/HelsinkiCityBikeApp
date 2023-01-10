@@ -7,5 +7,5 @@ class Csv(models.Model):
     activated = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"File id: {self.id - {self.file_name}}"
+        return f"File id: {self.pk} - {self.file_name}"
 

@@ -1,3 +1,22 @@
 html, body {
     background-color: antiquewhite;
 }
+
+#id_file_name {
+    box-sizing: border-box;
+    border: 2px solid #000;
+    background: none;
+    margin-bottom: 10px;
+    height: 50px;
+    border-radius: 10px;
+    font-size: 1.1em;
+    background: dodgerblue;
+    color: #fff;
+    border: #fff;
+    border-radius: 10px;
+    height: 50px;
+  }
+  
+  #csv_loader {
+    background-color: hsl(56, 51%, 90%);
+  }

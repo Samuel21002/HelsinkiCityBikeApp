@@ -1,0 +1,35 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{%block title%}
+CSV Upload
+{%endblock title%}
+
+<!-- For alerts and messages -->
+<div id="alert-box"></div>
+<br>
+
+{%block content%}
+<form id="upload-form" action="" method="post" class="ui form form_style" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="id_csv_data">CSV Type: </label>
+    <select name="csv_data" id="id_csv_data">
+        <option value="journey" selected>Journeys</option>
+        <option value="station">Stations</option>
+    </select>
+    {{form.as_p}}
+    <div>
+        <label for="id_safe_btn">
+        <input type="checkbox" name="safe_create" id="id_safe_btn" size="30"
+        value="safe_create">
+        <span>Using 'Safe create' will wait for the whole file to be read until adding any data to the database.<br>
+            Will improve performance but does not create the objects until the whole CSV-file is read.</span></label><br>
+    </div>
+    <button type="submit" class="ui button primary mt-4">Confirm</button>
+</form>
+<br>
+<div id="progress-box" class="not-visible">
+    
+</div>
+<script src="{% static 'csvimport/scripts/csvimport_script.js' %}"></script>
+{%endblock content%}
