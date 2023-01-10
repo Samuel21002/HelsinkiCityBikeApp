@@ -3,6 +3,7 @@ from django.test import TestCase, Client
 from .models import Csv
 from django.contrib.auth.models import User
 from django.urls import reverse, resolve
+import os
 
 # Create your tests here.
 class CSVImportTests(TestCase):
@@ -28,7 +29,7 @@ class CSVImportTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<h1>Index Page</h1>')
 
-    def test_add_csv_db(self):
+    def test_add_csv_db_directly(self):
         self.obj = Csv.objects.create(file_name='test.csv')
         self.assertEqual(Csv.objects.get(pk=self.obj.pk), self.obj)
         self.assertFalse(self.obj.activated, True)
