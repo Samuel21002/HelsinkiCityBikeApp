@@ -10,7 +10,9 @@ class JourneyAdmin(admin.ModelAdmin):
         'departure_time',
         'return_time',
         'departure_station',
+        'departure_station_name',
         'return_station',
+        'return_station_name',
         'covered_distance',
         'duration'
         )

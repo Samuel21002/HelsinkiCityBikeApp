@@ -10,7 +10,7 @@ CSV Upload
 <br>
 
 {%block content%}
-<form id="upload-form" action="" method="post" class="ui form form_style" enctype="multipart/form-data">
+<form id="upload-form" action="{% url 'csvimport:upload_file' %}" method="post" class="ui form form_style" enctype="multipart/form-data">
     {% csrf_token %}
     <label for="id_csv_data">CSV Type: </label>
     <select name="csv_data" id="id_csv_data">
