@@ -1,5 +1,23 @@
-html, body {
-    background-color: antiquewhite;
+:root {
+  --base: hsl(60, 87%, 55%);
+  --c-blue: #485fc7;
+}
+
+body {
+  box-sizing: border-box;
+  margin: 0 auto;
+  background-color: var(--c-blue) !important;
+}
+
+main {
+  background-color: var(--c-blue);
+  padding: 0.2rem;
+}
+
+.container {
+  background-color: var(--base);
+  border: 1px transparent var(--base);
+  border-radius: 3%;
 }
 
 #id_file_name {
@@ -10,7 +28,7 @@ html, body {
     height: 50px;
     border-radius: 10px;
     font-size: 1.1em;
-    background: dodgerblue;
+    background-image: linear-gradient(to right, var(--c-blue), dodgerblue);
     color: #fff;
     border: #fff;
     border-radius: 10px;
@@ -19,4 +37,18 @@ html, body {
   
   #csv_loader {
     background-color: hsl(56, 51%, 90%);
+  }
+
+  /* Map element */
+  #id_map {
+      padding: 10px;
+      border: 8px solid hsl(56, 51%, 90%);
+  }
+
+  /* Limits element height to half the view height */
+  .vh-50 {max-height: 50vh;}
+
+  /* Highlight station search suggestions */
+  .hl {
+    background: var(--base);
   }

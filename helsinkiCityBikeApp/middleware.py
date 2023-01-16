@@ -5,6 +5,7 @@ from django.utils.deprecation import MiddlewareMixin
 AUTH_EXEMPT_ROUTES = ('captcha-image', 'login', 'captcha')
 
 class RejectAnonymousUsersMiddleware(MiddlewareMixin):
+    """ By default, the apps require authentication """
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         current_route_name = resolve(request.path_info).url_name

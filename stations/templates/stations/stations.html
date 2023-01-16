@@ -1,0 +1,81 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{%block title%}
+Stations
+{%endblock title%}
+
+<!-- Main page -->
+{% block content %}
+
+<!-- The map -->
+<section id="map_and_stations_view">
+    <div class="columns is-full-hd">
+        <div class="column is-7 vh-50" id="id_map">
+        </div>
+        <div class="column is-5 g-0 lighten-5 vh-50">
+            <div class="field">
+                <h4>Find Stations</h4>
+                <input type="text" class="input" placeholder="Station name" id="id_search" required>
+                <ul class="suggestions"></ul>
+            </div>
+
+            <!-- The search element -->
+            <div class="results" style="max-height:38vh; overflow-y:scroll;">
+                {% if stations %}
+                <section class="bg-washed-blue">
+                    <article class="ba b--black-10 br2 bg-white pa4 center">
+                        <ul id="id_station_list" class="list f6 pl0 mb0">
+
+                        <!-- All stations are rendered here or none if none are found  -->
+                        {% for s in stations %}    
+                        <li class="pv2">
+                            <a onClick="get_station_info({{s.station_id}})" class="link blue lh-title">
+                                <span class="fw7 underline-hover">{{s.name_fin}}, {{s.name_swe}}</span>
+                                <span class="db black-60">{{s.address_fin}}, {{s.address_swe}}</span>
+                            </a>
+                        </li>  
+                        {% endfor %}
+                    </ul>
+                </section>
+                {%else%}
+                <p>No stations found</p>
+                {%endif%}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- The information section -->
+<section id="information">
+    <div class="columns pa4 is-full-hd bg-white my-4" style="max-height:38vh;">
+        <div class="column lighten-3 station_info_div vh-50">
+            <h3>Station information here</h3><br>
+            <ul class="info_ul">
+            </ul>
+        </div>
+        <div class="column lighten-3 div_border vh-50">
+            <h3>Most popular return stations from this point:</h3><br>
+            <table id="id_station_dep_most_pop_ret" class="table is-hoverable">
+                <tr>
+                    <td>No data</td>
+                </tr>
+            </table>
+            
+        </div>
+        <div class="column lighten-3 div_border vh-50">
+            
+            <h3>Most popular departure stations to this point:</h3><br>
+            <table id="id_station_ret_most_pop_dep" class="table is-hoverable">
+                <tr>
+                    <td>No data</td>
+                </tr>
+            </table>
+            
+        </div>
+    </div>
+</section>
+    
+
+<script src="{% static 'stations/script_stations.js' %}"></script>
+
+{%endblock content%}
