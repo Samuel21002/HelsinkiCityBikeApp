@@ -1,0 +1,25 @@
+{% block pagination %}
+<nav class="pagination is-small" role="navigation" aria-label="pagination">
+    <ul class="pagination-list">
+    {% if page_obj.has_previous %}
+        <a class="pagination-previous" href="?page={{ page_obj.previous_page_number }}&{{ query }}">&laquo; Previous</a>
+        <a class="page-link"  href="?page=1&{{ query }}"> &laquo; First</a>
+    {% endif %}
+        {% for i in page_range|default_if_none:page_obj.paginator.get_elided_page_range %}
+            {% if page_obj.number == i %}
+                <li><a class="pagination-link is-current" aria-label="Page {{i}}" aria-current="page">{{ i }}</a></li>
+            {% else %}
+                {% if i == page_obj.paginator.ELLIPSIS %}
+                    <li class="page-item"><span class="page-link">{{ i }}</span></li>
+                {% else %}
+                    <li class="page-item"><a class="pagination-link" href="?page={{ i }}&{{query}}">{{ i }}</a></li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <a class="pagination-next" href="?page={{ page_obj.next_page_number }}&{{ query }}">Next</a>
+            <a class="page-link"  href="?page={{ page_obj.paginator.num_pages }}&{{ query }}">Last &raquo;</a>
+        {% endif %}
+    </ul>
+  </nav>
+{%endblock%}

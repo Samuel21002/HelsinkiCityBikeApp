@@ -4,6 +4,82 @@
 {%block title%}
 Journeys
 {%endblock title%}
-{%block content%}
-<h1>Journeys Page</h1>
+
+<!-- Main page -->
+{% block content %}
+
+<div class="columns is-full-hd">
+    <div class="column is-8 has_margin vh-50" id="id_map">
+    </div>
+    <div class="measure center column is-4-widescreen is-one-thirds-tablet" style="max-height:38vh;">
+
+        <!-- Search form -->
+        <form id="id_journey_form" action="{% url 'journeys:search_journeys' %}">
+            <legend>Station: </legend>
+            <input type="text" autocomplete="off" class="input-reset ba b--black-20 pa2 mb2 db w-100" id="id_search_field" placeholder="Station name" name="search" required>
+            <div class="is-flex is-flex-direction-row">   
+                <fieldset>
+                    <label class="db fw6 lh-copy f6" for="id_departure">
+                    <input type="checkbox" class="pa2 fw6"  checked="checked" name="journey_dep_station" id="id_departure" size="30"
+                    value="departure">
+                    <span>Departure Station</span></label>
+                        
+                    <label class="db fw6 lh-copy f6" for="id_return">
+                    <input type="checkbox" class="pa2 fw6"  checked="checked" name="journey_ret_station" id="id_return" size="30"
+                    value="return">
+                    <span>Return station</span></label>
+                </fieldset>
+            </div>
+            <div style="max-height:30vh; overflow-y:scroll">
+                <!-- Departure- / Return Time -->
+                <legend>Date: </legend>
+                <input type="text" class="input-reset ba b--black-20 pa2 mb2 db w-100" id="id_calc_month" name="daterange"/>
+                
+                <legend>Distance <small>(m)</small>: </legend>
+                <div class="column">
+                    <label class="db fw6 lh-copy f6" for="id_min-distance">Min: </label>
+                    <input class="input-reset ba b--black-20 pa2 mb2 db w-100" type="number" id="id_min-distance" name="distance" value="10" min-value="10"/>
+                    <label class="db fw6 lh-copy f6" for="id_max-distance">Max: </label>
+                    <input class="input-reset ba b--black-20 pa2 mb2 db w-100" type="number" id="id_max-distance" name="distance" value="10000"/>
+                </div>
+                
+                <legend>Duration <small>(s)</small>: </legend>
+                <div class="column">
+                    <label class="db fw6 lh-copy f6" for="id_min-duration">Min: </label>
+                    <input class="input-reset ba b--black-20 pa2 mb2 db w-100"  type="number" id="id_min-duration" name="duration" value="10" min-value="10"/>
+                    <label class="db fw6 lh-copy f6" for="id_max-duration">Max: </label>
+                    <input class="input-reset ba b--black-20 pa2 mb2 db w-100" type="number" id="id_max-duration" name="duration" value="10000"/>
+                </div>
+            </div>
+            <button type="submit" id="id_submit" class="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib">Search</button> 
+            <output id="errors"></output>
+        </form>
+    </div>
+</div>
+
+<!-- Search Results -->
+<div class="columns is-full-hd" style="max-height:38vh; overflow-y:scroll">
+    
+    <div class="column">
+        <h3>Results</h3>
+
+        {%if search_results %}
+        <h5>Your search matches {{search_results.count}} results</h5>
+            {% include 'journeys/search_partial.html' %}    
+        {%endif%}
+
+    </div>
+</div>
+
+<!-- Pagination rendered dynamically -->
+{% if search_results %}
+    {% include 'journeys/pagination.html' %}
+{% else %}
+    <p class="text-center">No journeys</p>
+{% endif %}
+        
+<script src="{% static 'journeys/leaflet_scripts/leaflet.geometryutil.js' %}"></script>
+<script src="{% static 'journeys/leaflet_scripts/leaflet-arrowheads.js' %}"></script>
+<script src="{% static 'journeys/script_journeys.js' %}"></script>
+
 {%endblock content%}

@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await fetch(url)
       const data = await response.json()
       return JSON.parse(data)
-      return
     } catch (e) {
       console.error('Error loading JSONresponse from the URL!')
       console.error(e)
