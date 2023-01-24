@@ -23,4 +23,5 @@ urlpatterns = [
     path('csvimport/', include('csvimport.urls', namespace='csvimport')),
     path('journeys/', include('journeys.urls', namespace='journeys')),
     path('stations/', include('stations.urls', namespace='stations')),
+    path('celery-progress/', include('celery_progress.urls')),
 ]

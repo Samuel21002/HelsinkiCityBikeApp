@@ -74,8 +74,10 @@ def get_station_info(request, station_id):
 
                 """ Total number of journeys starting from the station
                 Total number of journeys ending at the station """
-                stations_dep = Journey.objects.filter(departure_station=station)
-                stations_ret = Journey.objects.filter(return_station=station)
+                stations_dep = Journey.objects.filter(departure_station=station
+                )
+                stations_ret = Journey.objects.filter(return_station=station
+                )
 
                 """ Counting the average distance of a journey starting from the station
                 and the average distance of a journey ending at the station or return 0

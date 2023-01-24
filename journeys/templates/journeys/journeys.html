@@ -16,7 +16,7 @@ Journeys
         <!-- Search form -->
         <form id="id_journey_form" action="{% url 'journeys:search_journeys' %}">
             <legend>Station: </legend>
-            <input type="text" autocomplete="off" class="input-reset ba b--black-20 pa2 mb2 db w-100" id="id_search_field" placeholder="Station name" name="search" required>
+            <input type="text" autocomplete="off" class="input-reset ba b--black-20 pa2 mb2 db w-100" id="id_search_field" placeholder="Station name" name="search">
             <div class="is-flex is-flex-direction-row">   
                 <fieldset>
                     <label class="db fw6 lh-copy f6" for="id_departure">
@@ -58,14 +58,29 @@ Journeys
 </div>
 
 <!-- Search Results -->
-<div class="columns is-full-hd" style="max-height:38vh; overflow-y:scroll">
+<div class="columns is-full-hd" style="max-height:38vh;">
     
     <div class="column">
-        <h3>Results</h3>
-
         {%if search_results %}
-        <h5>Your search matches {{search_results.count}} results</h5>
-            {% include 'journeys/search_partial.html' %}    
+            <h5>Your search matches {{search_results.count}} results</h5>
+            <table class="table w-100" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Journey</th>
+                        <th>Departure</th>
+                        <th>Return</th>
+                        <th>Departure Station</th>
+                        <th>Return Station</th>
+                        <th>Covered Distance</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <div class="table-container" style="overflow-y:scroll">
+                    <tbody class="lh-copy">
+                            {% include 'journeys/search_partial.html' %}
+                    </tbody>
+                </div>
+            </table>
         {%endif%}
 
     </div>

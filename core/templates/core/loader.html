@@ -1,0 +1,38 @@
+{%load static%}
+
+<div id="loader" class="notification">
+  <button class="delete" onClick="hideProgressBar()"></button>
+
+  <div class='progress-wrapper'>
+    <div class="columns">
+      <div id='progress-bar' class='column-is-9 p-2 progress-bar' style="background-color: #68a9ef; width: 0%; height: 2rem">
+        &nbsp;
+      </div>
+      <div class="column-is-3 pa2">
+        <a class="button p-2 is-danger" onClick="terminateProcess('{{task_id}}')">Cancel</a>
+      </div>
+    </div>
+    <div id="progress-bar-message">Waiting for progress to start...</div>
+  </div>
+  
+</div>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+    var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
+    const loader = document.getElementById('loader')
+    loader.classList.toggle('show_loader')
+    CeleryProgressBar.initProgressBar(progressUrl);
+  });
+    const terminateProcess = (task_id) => {
+      console.log("moi")
+      try {
+        const response = fetch(`/celery_progress_terminate/${task_id}`)
+        console.log(response)
+        const data = response.data
+        return data
+      } catch (e) {
+        console.error('Error!')
+      }
+    } 
+  </script>

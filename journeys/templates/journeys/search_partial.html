@@ -1,4 +1,20 @@
 {%for result in page_obj %}
+    <tr>
+        <td class="pr3 f6">
+        <a href="#id_map" onclick="get_journey({{result.id}})">
+            {{result.departure_station_name}} ->->-> {{result.return_station_name}}
+            </a>
+        </td>
+        <td class="pr3 f6">{{result.departure_time}}</td>
+        <td class="pr3 f6">{{result.return_time}}</td>
+        <td class="pr3 f6">{{result.departure_station_name}}</td>
+        <td class="pr3 f6">{{result.return_station_name}}</td>
+        <td class="pr3 f6">{{result.covered_distance|default:"-"}}</td>
+        <td class="pr3 f6">{{result.duration_format}}</td>
+    </tr>
+    <tr>
+{%endfor%}
+{% comment %} {%for result in page_obj %}
     <a href="#id_map" onclick="get_journey({{result.id}})">{{result.departure_station_name}} ->->-> {{result.return_station_name}}</a>
     <p>Departure Time : {{result.departure_time}}</p>
     <p>Return Time : {{result.return_time}}</p>
@@ -6,4 +22,4 @@
     <p>Return Station : {{result.return_station_name}}</p>
     <p>Distance : {{result.covered_distance|default:"-"}} (m)</p>
     <p>Duration : {{result.duration_format}}</p><br>
-{%endfor%}
+{%endfor%} {% endcomment %}

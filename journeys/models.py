@@ -11,9 +11,9 @@ class Journey (models.Model):
     departure_time = models.DateTimeField(auto_now = False, auto_now_add = False, default=timezone.now)
     return_time = models.DateTimeField(auto_now=False, auto_now_add=False, default=timezone.now)
     departure_station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name='departure_station')
-    departure_station_name = models.CharField(max_length=30, default="-")
+    departure_station_name = models.CharField(max_length=50, default="-")
     return_station = models.ForeignKey(Station, on_delete=models.CASCADE, related_name='return_station')
-    return_station_name = models.CharField(max_length=30, default="-")
+    return_station_name = models.CharField(max_length=50, default="-")
     covered_distance = models.DecimalField(max_digits=12, decimal_places=2, validators=[MinValueValidator(10, "Covered distance of the journey has to be bigger than 10.")])
     duration = models.PositiveIntegerField(validators=[MinValueValidator(10, "Duration of the journey has to be bigger than 10s.")])
 
@@ -25,6 +25,10 @@ class Journey (models.Model):
     # For database indexing
     class Meta:
         indexes = [
-            Index(fields=['departure_station']),
-            Index(fields=['return_station']),
+            Index(fields=['departure_time']),
+            Index(fields=['return_time']),
+            Index(fields=['departure_station_name']),
+            Index(fields=['return_station_name']),
+            Index(fields=['covered_distance']),
+            Index(fields=['duration']),
         ]

@@ -43,6 +43,13 @@ class StationAdmin(admin.ModelAdmin):
         'capacity',
         )
 
+class CsvAdmin(admin.ModelAdmin):
+        list_display = (
+        'upload_date',
+        'task_id',
+        'activated',
+        )
+
 admin.site.register(Journey, JourneyAdmin)
 admin.site.register(Station, StationAdmin)
-admin.site.register(Csv)
+admin.site.register(Csv, CsvAdmin)

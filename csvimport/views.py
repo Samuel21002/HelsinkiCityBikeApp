@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .forms import CsvModelForm
+from .models import Csv
 from csvimport.tasks import upload_csv
 from celery import current_app
 
@@ -31,9 +32,10 @@ def upload_file(request):
                 # Celery worker is running and processing tasks
                 print("Reading the csv")
                 result = upload_csv.delay(obj.file_name.path, csv_data_type, upload_type)
-                obj.activated = True
+                # request.session['task_id'] = result.task_id
+                obj.task_id = result.task_id
                 obj.save()
-                return render(request, 'core/index.html')
+                return render(request, 'core/index.html', {'task_id' : result.task_id} )
             else:
                 # Celery worker is not running
                 print("Celery not running")

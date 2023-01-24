@@ -52,3 +52,7 @@ main {
   .hl {
     background: var(--base);
   }
+
+.show_loader {
+  display: block;
+}
