@@ -35,10 +35,11 @@ def upload_csv(self, file_path, csv_data_type, upload_type):
     Returns a message from the celery task object telling whether the upload succeeded or failed """
 
     progress_recorder = ProgressRecorder(self)
-    csv_data = []
+    csv_data = []   # Temporary list for storing the CSV-rows
 
     with open(file_path, 'r') as file:
         reader = csv.DictReader(file)
+
         if csv_data_type == 'journey':
             # Fields in the csv: [0]Departure,[1]Return,[2]Departure station id,[3]Departure station name,[4]Return station id,[5]Return station name,[6]Covered distance (m),[7]Duration (sec.)
             reader.fieldnames = ['Departure','Return','Departure station id','Departure station name','Return station id','Return station name','Covered distance (m)','Duration (sec.)']
@@ -127,7 +128,7 @@ def upload_csv(self, file_path, csv_data_type, upload_type):
                     print(f"Row {i+1} : Field empty")
 
                 # Updates the progress after every iteration and passes the current state (in percentages) to the front end
-                progress_recorder.set_progress(i + 1, rowcount, f'{round(((i+1) / rowcount) * 100), 2}%')
+                progress_recorder.set_progress(i + 1, rowcount, f'{round(((i+1) / rowcount) * 100),2}%')
 
             # Before task completion, checks if there are objects left in the object list, add them to the db and return a success message 
             if object_list:

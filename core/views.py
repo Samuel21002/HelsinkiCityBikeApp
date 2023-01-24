@@ -3,41 +3,49 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login as user_login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from csvimport.tasks import go_to_sleep
+from helsinkiCityBikeApp.celery import app
 from csvimport.models import Csv
-from celery import task
 from celery.result import AsyncResult
+
 import json
 
 def load_index_page(request):
     return render(request, 'core/index.html')
+    
 
 def celery_progress_terminate(request, task_id):
     """ For terminating a celery upload 
         Returns a JSON of the upload state. """
-
     task = AsyncResult(task_id)
-    task.control.revoke_by_stamped_header({'header': 'value'}, terminate=True, signal='SIGKILL')
+    task.revoke()
+
+    obj = Csv.objects.get(task_id=task_id)
+    obj.delete()
+    obj.save()
+    app.control.revoke(task_id, terminate=True, signal='SIGKILL')
         
-    return JsonResponse(json.dumps({'task_status': task.state}), safe=False)
+    return JsonResponse(json.dumps({'task_status': str(task.state).capitalize()}), safe=False)
 
 def check_celery_status(request):
     """ A context processor shared across the whole project so that the ongoing upload task progress bars
         are shown in every page (as long as a user is logged in) """
 
     tasks = Csv.objects.filter(activated=False)
+    tasks_to_template = [] 
+
     if tasks:
         #If there are ongoing tasks, assign them to a list
         for task in tasks:
-            if (AsyncResult(task.task_id).state == 'SUCCESS'):
-                print(task)
+            if (AsyncResult(task.task_id).state == 'PENDING' or AsyncResult(task.task_id).state == '-'):
+                print(f"PENDING: {task}")
+                tasks_to_template.append(task)
+            elif (AsyncResult(task.task_id).state == 'SUCCESS'):
                 task.activated=True
                 task.save()      
-            elif (AsyncResult(task.task_id).state == 'PENDING'):
-                print(f"PENDING: {task}")
             elif (AsyncResult(task.task_id).state == 'FAILED'):
                 print(f"FAILED: {task}")
 
-    return {'tasks': tasks}
+    return {'tasks': tasks_to_template}
 
 def loader(request):
     """ Just a test, testing the loader pip-package"""

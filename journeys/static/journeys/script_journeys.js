@@ -61,16 +61,17 @@ getJsonData(get_station_geoJson).then(data => L.geoJSON(data, {
 /* Front-end form validation. If invalid search input is provided, error is rendered to the output element */
 const error = document.getElementById('errors')
 const form = document.querySelector('#id_journey_form')
-form.onchange = function() { 
 
+function validation() { 
+    
     const journey_dep_station = document.getElementById('id_departure')
     const journey_ret_station = document.getElementById('id_return')
     const distance = document.getElementsByName('distance')
     const button = document.getElementById('id_submit')
     const duration = document.getElementsByName('duration')
-
+    
     const conditionsArray = [
-        Boolean(!journey_dep_station.checked && !journey_ret_station.checked),
+        Boolean(!journey_dep_station.value && !journey_ret_station.value),
         Boolean(distance[0].value < 10),
         Boolean(Number(distance[1].value) < Number(distance[0].value)),
         Boolean(duration[0].value < 10), 
@@ -78,18 +79,21 @@ form.onchange = function() {
     ]
     
     if (conditionsArray.includes(true)) {
-        error.innerHTML = "Invalid input, check your values!"
+        error.innerHTML = "Invalid search input, check your values!"
         button.setAttribute("disabled", "disabled");
-
+        
     } else {
         error.innerHTML = ""
         button.removeAttribute("disabled");
     }
 }
 
+form.addEventListener('change', validation)
+form.addEventListener('keyup', validation)
+
 /*  Gets the essential journey info and renders an arrow from the departure to the return station.  
-    Takes in a journey id and gets the data from the backend using fetch. 
-    The closure takes in the map object from the page and adds the arrow layer to it. 
+Takes in a journey id and gets the data from the backend using fetch. 
+The closure takes in the map object from the page and adds the arrow layer to it. 
     If a previous arrow layer is found, it gets replaced with a new journey.
 */
 let layer;  // Updates the current journey leaflet layer with a new one

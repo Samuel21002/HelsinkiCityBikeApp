@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'core',
     'csvimport',
     'journeys',
+    "querystring_tag",
     'stations'
 ]
 
@@ -150,7 +151,12 @@ USE_I18N = True
 
 USE_TZ = True
 
-
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'my_cache_table',
+    }
+}
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
@@ -176,6 +182,5 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = "Europe/Helsinki"
-# CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_RESULT_EXTENDED = True

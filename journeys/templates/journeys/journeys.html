@@ -1,5 +1,6 @@
 {% extends 'core/base.html' %}
 {% load static %}
+{% load querystring_tag %}
 
 {%block title%}
 Journeys
@@ -15,21 +16,17 @@ Journeys
 
         <!-- Search form -->
         <form id="id_journey_form" action="{% url 'journeys:search_journeys' %}">
-            <legend>Station: </legend>
-            <input type="text" autocomplete="off" class="input-reset ba b--black-20 pa2 mb2 db w-100" id="id_search_field" placeholder="Station name" name="search">
-            <div class="is-flex is-flex-direction-row">   
-                <fieldset>
-                    <label class="db fw6 lh-copy f6" for="id_departure">
-                    <input type="checkbox" class="pa2 fw6"  checked="checked" name="journey_dep_station" id="id_departure" size="30"
-                    value="departure">
-                    <span>Departure Station</span></label>
-                        
-                    <label class="db fw6 lh-copy f6" for="id_return">
-                    <input type="checkbox" class="pa2 fw6"  checked="checked" name="journey_ret_station" id="id_return" size="30"
-                    value="return">
-                    <span>Return station</span></label>
-                </fieldset>
-            </div>
+            <legend>Departure Station: </legend>
+            {% comment %} <input type="text" autocomplete="off" class="input-reset ba b--black-20 pa2 mb2 db w-100" id="id_search_field" placeholder="Station name" name="search">   {% endcomment %}
+            <label class="db fw6 lh-copy f6" for="id_departure">
+            <input type="text" autocomplete="off" class="input-reset ba b--black-20 pa2 mb2 db w-100" name="journey_dep_station" id="id_departure" maxlength="30"
+            placeholder="Departure station"></label>
+            
+            <legend>Return Station: </legend>
+            <label class="db fw6 lh-copy f6" for="id_return">
+            <input type="text" autocomplete="off" class="input-reset ba b--black-20 pa2 mb2 db w-100" name="journey_ret_station" id="id_return" maxlength="30"
+            placeholder="Return station"></label>
+            
             <div style="max-height:30vh; overflow-y:scroll">
                 <!-- Departure- / Return Time -->
                 <legend>Date: </legend>
@@ -51,40 +48,45 @@ Journeys
                     <input class="input-reset ba b--black-20 pa2 mb2 db w-100" type="number" id="id_max-duration" name="duration" value="10000"/>
                 </div>
             </div>
-            <button type="submit" id="id_submit" class="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib">Search</button> 
+            <button type="submit" id="id_submit" class="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" disabled="true">Search</button> 
             <output id="errors"></output>
         </form>
     </div>
 </div>
 
 <!-- Search Results -->
-<div class="columns is-full-hd" style="max-height:38vh;">
+{%if search_results %}
+<div class="columns is-full-hd is-vcentered h3">
     
-    <div class="column">
-        {%if search_results %}
-            <h5>Your search matches {{search_results.count}} results</h5>
-            <table class="table w-100" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Journey</th>
-                        <th>Departure</th>
-                        <th>Return</th>
-                        <th>Departure Station</th>
-                        <th>Return Station</th>
-                        <th>Covered Distance</th>
-                        <th>Duration</th>
-                    </tr>
-                </thead>
-                <div class="table-container" style="overflow-y:scroll">
-                    <tbody class="lh-copy">
-                            {% include 'journeys/search_partial.html' %}
-                    </tbody>
-                </div>
-            </table>
-        {%endif%}
-
+    <div class="column is-8">
+        <h5>Your search matches {{search_results.count}} results</h5>
+    </div>
+    <div class="column is-4 tr">
+        <a href="{% querystring discard 'direction' %}&direction=asc" class="mx-2">Ascending</a>
+        <a href="{% querystring discard 'direction' %}&direction=desc" class="mx-2">Descending</a>
     </div>
 </div>
+<div class="columns is-full-hd" style="max-height:45vh;">
+    <table class="table w-100" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Journey</th>
+                <th><a href="{% querystring discard 'order_by' %}&order_by=departure_time">Departure</th></a>
+                <th><a href="{% querystring discard 'order_by' %}&order_by=return_time">Return</th></a>
+                <th><a href="{% querystring discard 'order_by' %}&order_by=departure_station">Departure Station</th></a>
+                <th><a href="{% querystring discard 'order_by' %}&order_by=return_station">Return Station</th></a>
+                <th><a href="{% querystring discard 'order_by' %}&order_by=covered_distance">Covered Distance <small>(m)</small></th></a>
+                <th><a href="{% querystring discard 'order_by' %}&order_by=duration">Duration</th></a>
+            </tr>
+        </thead>
+        <div class="table-container" style="overflow-y:scroll">
+            <tbody class="lh-copy">
+                    {% include 'journeys/search_partial.html' %}
+            </tbody>
+        </div>
+    </table>
+</div>
+{%endif%}
 
 <!-- Pagination rendered dynamically -->
 {% if search_results %}
