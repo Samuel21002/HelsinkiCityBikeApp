@@ -1,5 +1,20 @@
 {%for result in page_obj %}
-    <tr>
+    <div class="columns ba b--black-10 pt2 h3-is-desktop h4-is-tablet h6-is-mobile center tc">
+
+        <li class="column is-3-widescreen is-2-tablet pr3 f6 f6-ns fw6 ">
+        <a href="#id_map" onclick="get_journey({{result.id}})">
+            {{result.departure_station_name}} <i class="fa-solid fa-arrow-right-long w-10"></i> {{result.return_station_name}}
+            </a>
+        </li>
+        <li class="column is-2-widescreen is-2-tablet is-mobile fw3 measure-narrow center ph2 pv2">{{result.departure_time}}</li>
+        <li class="column is-2-widescreen is-2-tablet is-mobile fw3 measure-narrow center ph2 pv2">{{result.return_time}}</li>
+        <li class="column is-1-widescreen is-2-tablet is-mobile fw3 measure-narrow center ph2 pv2">{{result.departure_station_name}}</li>
+        <li class="column is-1-widescreen is-2-tablet is-mobile fw3 measure-narrow center ph2 pv2">{{result.return_station_name}}</li>
+        <li class="column is-1-widescreen is-1-tablet is-mobile fw3 measure-narrow center ph2 pv2">{{result.covered_distance|default:"-"}}</li>
+        <li class="column is-1-widescreen is-1-tablet is-mobile fw3 measure-narrow center ph2 pv2">{{result.duration}}</li>
+    </div>
+    {%endfor%}
+    {% comment %} <tr>
         <td class="pr3 f6">
         <a href="#id_map" onclick="get_journey({{result.id}})">
             {{result.departure_station_name}} ->->-> {{result.return_station_name}}
@@ -10,16 +25,5 @@
         <td class="pr3 f6">{{result.departure_station_name}}</td>
         <td class="pr3 f6">{{result.return_station_name}}</td>
         <td class="pr3 f6">{{result.covered_distance|default:"-"}}</td>
-        <td class="pr3 f6">{{result.duration_format}}</td>
-    </tr>
-    <tr>
-{%endfor%}
-{% comment %} {%for result in page_obj %}
-    <a href="#id_map" onclick="get_journey({{result.id}})">{{result.departure_station_name}} ->->-> {{result.return_station_name}}</a>
-    <p>Departure Time : {{result.departure_time}}</p>
-    <p>Return Time : {{result.return_time}}</p>
-    <p>Departure Station : {{result.departure_station_name}}</p>
-    <p>Return Station : {{result.return_station_name}}</p>
-    <p>Distance : {{result.covered_distance|default:"-"}} (m)</p>
-    <p>Duration : {{result.duration_format}}</p><br>
-{%endfor%} {% endcomment %}
+        <td class="pr3 f6">{{result.duration}}</td>
+    </tr> {% endcomment %}

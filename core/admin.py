@@ -19,12 +19,14 @@ class JourneyAdmin(admin.ModelAdmin):
     search_fields = ['departure_station_name', 'return_station_name', 'duration', 'covered_distance']
     fieldsets = [
 
-    ('Departure Time',      {'fields': ['departure_time']}),
-    ('Return Time',         {'fields': ['return_time']}),
-    ('Departure Station',   {'fields': ['departure_station']}),
-    ('Return Station',      {'fields': ['return_station']}),
-    ('Covered Distance',    {'fields': ['covered_distance']}),
-    ('Duration',            {'fields': ['duration']})
+    ('Departure Time',          {'fields': ['departure_time']}),
+    ('Return Time',             {'fields': ['return_time']}),
+    ('Departure Station',       {'fields': ['departure_station']}),
+    ('Departure Station Name',  {'fields': ['departure_station_name']}),
+    ('Return Station',          {'fields': ['return_station']}),
+    ('Return Station Name',     {'fields': ['return_station_name']}),
+    ('Covered Distance',        {'fields': ['covered_distance']}),
+    ('Duration',                {'fields': ['duration']})
     ]
 
     list_filter = ['departure_time', 'return_time']

@@ -1,13 +1,12 @@
-document.addEventListener('DOMContentLoaded', () => {
-    
-    console.log("CSVLoader document loaded")
-    const uploadForm = document.getElementById('upload-form')
-    const input = document.getElementById('id_file_name')
-    const alertBox = document.getElementById('alert-box')
-    const progressBox = document.getElementById('progress-box')
-    const cancelBox = document.getElementById('cancel-box')
-    const cancelBtn = document.getElementById('cancel-btn')
-    const csrf = document.getElementsByName('csrfmiddlewaretoken')
-    
-    
-    });
+let formGroup = document.querySelector("#id_form_group");
+
+let selectbox = formGroup.querySelector("select");
+let fileinput = formGroup.querySelector("input[type='file']");
+selectbox.classList.add("input-reset", "ba", "b--black-20", "pa2", "mb2", "db", "w-20");
+fileinput.classList.add("input-reset", "ba", "b--black-20", "pa2", "mb2", "db", "w-20");
+
+let labels = formGroup.querySelectorAll("label");
+labels.forEach(label => {
+    label.classList.add("db", "fw6", "lh-copy", "f6");
+});
+        

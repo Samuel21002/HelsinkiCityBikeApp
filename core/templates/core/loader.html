@@ -1,25 +1,22 @@
 {%load static%}
 
 <!-- Loader partial for every ongoing task -->
-<div id="loader" class="notification">
-  <button class="delete" onClick="hideProgressBar()"></button>
-
-  <div class='progress-wrapper'>
+<div id="loader_{{task_id}}" class="notification mh2">
+  <div class='progress-wrapper h3'>
       <div class="columns">
-        <div id='progress-bar' class='column-is-9 p-2 progress-bar' style="background-color: #68a9ef; width: 0%; height: 1.5rem">
+        <div id='progress-bar' class='column-is-9 p-2 progress-bar' style="background-color: #68a9ef; width: 0%; height: 1.2rem">
           &nbsp;
         </div>
       </div>
       <div class="columns">
-        <div class="column-is-2 pa2">
-          <a class="button p-2 is-danger" onClick="terminateProcess('{{task_id}}')">Cancel</a>
-          <div class="column-is-10 pa2">
+        <div class="column-is-2">
+          <a class="button p-2 is-danger mh2 is-small" onClick="terminateProcess('{{task_id}}')">Cancel</a>
+        </div>
+        <div class="column-is-10">
           <div id="progress-bar-message">Waiting for progress to start...</div>
-          </div>
         </div>
       </div>
   </div>
-  
 </div>
   
   <script>
@@ -27,15 +24,22 @@
     var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
     const loader = document.getElementById('loader')
     loader.classList.toggle('show_loader')
-    CeleryProgressBar.initProgressBar(progressUrl);
+    CeleryProgressBar.initProgressBar(progressUrl, {
+      pollInterval: 1000,
+      onError: function() {
+          document.getElementById('progress-bar-message').innerHTML = 'Juuuu'
+      }
+
+    });
   });
-    const terminateProcess = (task_id) => {
+    const terminateProcess = async(task_id) => {
       console.log("Process terminated")
       try {
-        const response = fetch(`/celery_progress_terminate/${task_id}`)
-        console.log(response)
-        const data = JSON.parse(response.data)
-        document.getElementById('progress-bar-message').innerHTML = data.task_status;
+        const response = await fetch(`/celery_progress_terminate/${task_id}`)
+        const data = await response.json()
+        result = JSON.parse(data)
+        let el = document.getElementById('loader_{{task_id}}').innerHTML = 
+        `<div id="progress-bar-message">${result.task_status}</div>`
 
         return data
       } catch (e) {

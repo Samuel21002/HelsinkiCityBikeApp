@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.staticfiles',
     'django_celery_results',
+    'django_elasticsearch_dsl',
     'celery_progress',
     'core',
     'csvimport',
@@ -82,6 +83,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'helsinkiCityBikeApp.wsgi.application'
 
+ELASTICSEARCH_DSL={
+    'default': {
+        'hosts': 'localhost:9200'
+    },
+}
 
 # LOGGING = {
 #     'version': 1,

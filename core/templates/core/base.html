@@ -17,6 +17,12 @@
     <link rel="stylesheet" type='text/css' href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.14/semantic.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 
+    <!-- Font awesome / Fonts -->
+    <script src="https://kit.fontawesome.com/605055b1e7.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Saira+Condensed&display=swap" rel="stylesheet">
+
     <!--Tachyons -->
     <link rel="stylesheet" href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css"/>
     
@@ -34,30 +40,26 @@
   <body>
     
     <nav class="navbar is-link" role="navigation" aria-label="main navigation">
-      <div class="navbar-brand navbar-addon">
+      <div class="navbar-brand">
         <a class="navbar-item" href="#">
-          <img src="{% static 'core/images/CitybikeLogo_2.png' %}" alt="main logo" width="170" height="80">
+          <img src="{% static 'core/images/citybikeapp-logo-nav.png' %}" alt="main logo" width="80" height="80">
         </a>
-    
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </a>
+        <div class="navbar-burger" data-target="navbarExampleTransparentExample">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
       </div>
     
       <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
-          <a class="navbar-item" href="{% url 'core:index'%}">
-            Index
-          </a>
     
           <a class="navbar-item" href="{% url 'journeys:journeys'%}">
-            <i class="fa-solid fa-bicycle"></i>Journeys
+            <i class="fa-solid fa-bicycle"></i>&nbsp;Journeys
           </a>
     
           <a class="navbar-item" href="{% url 'stations:stations'%}">
-            <i class="fa-solid fa-location-dot"></i>Stations
+            <i class="fa-solid fa-location-dot"></i>&nbsp;Stations
           </a>
 
           <a class="navbar-item" href="{% url 'admin:index'%}">
@@ -65,33 +67,11 @@
           </a>
         </div>
       
-          <div class="navbar-end">
-            <a class="navbar-link">
-              Add...
-            </a>
-     
-            <div class="navbar-dropdown">
-              <a class="navbar-item">
-                Journeys
-              </a>
-              <a class="navbar-item">
-                Stations
-              </a>
-              {% comment %}
-              <a class="navbar-item">
-                Contact
-              </a>
-              <hr class="navbar-divider">
-              <a class="navbar-item">
-                Report an issue
-              </a>
-            </div> {% endcomment %}
-        </div>
     
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
-              <a class="js-modal-trigger button is-primary" href="{% url 'csvimport:csvimport' %}">
+              <a class="button is-primary" href="{% url 'csvimport:csvimport' %}">
                 <strong>Upload CSV</strong>
               </a>
               {%if user.is_authenticated%}
@@ -104,18 +84,36 @@
         </div>
       </div>
     </nav>
+
     <main>
+      {% if messages %}
+        {% for message in messages %}
+        <article id="messages" class="message is-warning">
+          <div class="message-header">
+            {{message}}
+            <button class="delete" aria-label="delete" onclick="closeMsg()"></button>
+          </div>
+        </article>
+        {%endfor%}
+      {%endif%}
       <div class="container is-fluid pa4">
         {% block content %}
         {% endblock content %}
       </div>
     </main>
-    <footer class="w-100" style="position:fixed; bottom:0; ">
+    <footer class="w-100 pa1" style="position:fixed; bottom:0; ">
+      <div class="loader_btn">
+        <button class="button-five ma3" onclick="toggle_loader()"><i class="fa-solid fa-upload"></i></button>
+      </div>
+      <div class="loader_div">
       {%if tasks and user.is_authenticated %}
       {% for task in tasks %}
         {%include 'core/loader.html' with task_id=task.task_id %}
       {%endfor%}
+      {%else%}
+        <span class="has-background-white-ter">You have no uploads.</span>
       {%endif%}
+      </div>
     </footer>
     <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
   </body>

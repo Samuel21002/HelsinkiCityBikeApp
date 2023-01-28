@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login as user_login, logout
 from django.contrib.auth.forms import AuthenticationForm
-from csvimport.tasks import go_to_sleep
+from django.contrib import messages
 from helsinkiCityBikeApp.celery import app
 from csvimport.models import Csv
 from celery.result import AsyncResult
@@ -11,48 +11,41 @@ import json
 
 def load_index_page(request):
     return render(request, 'core/index.html')
-    
 
 def celery_progress_terminate(request, task_id):
     """ For terminating a celery upload 
         Returns a JSON of the upload state. """
     task = AsyncResult(task_id)
-    task.revoke()
 
-    obj = Csv.objects.get(task_id=task_id)
-    obj.delete()
-    obj.save()
-    app.control.revoke(task_id, terminate=True, signal='SIGKILL')
+    obj = Csv.objects.get(task_id=task.task_id)
+    if obj:
+        task.revoke()
+        app.control.revoke(task.task_id, terminate=True, signal='SIGKILL')
+        obj.delete()
         
-    return JsonResponse(json.dumps({'task_status': str(task.state).capitalize()}), safe=False)
+    return JsonResponse(json.dumps({'task_status': "Task has been terminated!"}), safe=False)
 
 def check_celery_status(request):
-    """ A context processor shared across the whole project so that the ongoing upload task progress bars
-        are shown in every page (as long as a user is logged in) """
-
+    """ A context processor shared across the whole project so that the ongoing uploads
+        are shown on every page as progress bars (as long as a user is logged in)
+        Returns only the 'PENDING' objects to the template """
+    
     tasks = Csv.objects.filter(activated=False)
-    tasks_to_template = [] 
 
     if tasks:
         #If there are ongoing tasks, assign them to a list
         for task in tasks:
-            if (AsyncResult(task.task_id).state == 'PENDING' or AsyncResult(task.task_id).state == '-'):
-                print(f"PENDING: {task}")
-                tasks_to_template.append(task)
-            elif (AsyncResult(task.task_id).state == 'SUCCESS'):
+            obj = AsyncResult(task.task_id)
+            if obj.state == 'SUCCESS':
+                print(f"SUCCESS: {task}")
                 task.activated=True
                 task.save()      
-            elif (AsyncResult(task.task_id).state == 'FAILED'):
-                print(f"FAILED: {task}")
-
-    return {'tasks': tasks_to_template}
-
-def loader(request):
-    """ Just a test, testing the loader pip-package"""
-
-    task = go_to_sleep.delay(5)
-    request.session['task_id'] = task.task_id
-    return render(request, 'core/loader.html', {'task_id' : task.task_id} )
+                tasks.exclude(task_id=obj.task_id)
+                print(tasks)
+            if obj.state != 'PENDING':
+                tasks.exclude(task_id=obj.task_id)
+    print(tasks)
+    return {'tasks': tasks}
 
 def login(request):
     """ Login form. Loads by default when trying to access any page as an unauthorized user """
@@ -62,12 +55,15 @@ def login(request):
         if form.is_valid():
             user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
             if user is not None:
-                valuenext= str(request.POST['next'])
+                valuenext= str(request.POST['next'])    # Redirects to the page user initially tried to access
                 if valuenext:
                     user_login(request, user)
                     return redirect(valuenext)
                 else:
                     return redirect('/')
+        else:
+            messages.error(request, "Login failed, verify your username and password.")
+            return redirect('/')
     else:
         form = AuthenticationForm()
     return render(request, 'core/login.html', {'form':form })

@@ -10,23 +10,25 @@ CSV Upload
 <br>
 
 {%block content%}
-<form id="upload-form" action="{% url 'csvimport:upload_file' %}" method="post" class="ui form form_style" enctype="multipart/form-data">
-    {% csrf_token %}
-    <label for="id_csv_data">CSV Type: </label>
-    <select name="csv_data" id="id_csv_data">
-        <option value="journey" selected>Journeys</option>
-        <option value="station">Stations</option>
-    </select>
-    {{form.as_p}}
-    <div>
-        <label for="id_safe_btn">
-        <input type="checkbox" name="safe_create" id="id_safe_btn" size="30"
-        value="safe_create">
-        <span>Using 'Safe create' will wait for the whole file to be read until adding any data to the database.<br>
-            Will improve performance but does not create the objects until the whole CSV-file is read.</span></label><br>
-    </div>
-    <button type="submit" class="ui button primary mt-4">Confirm</button>
-</form>
+<div id="id_form_group">
+    <form id="upload-form" action="{% url 'csvimport:upload_file' %}" method="post" class="ui form form_style" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="id_csv_data">CSV Type: </label>
+        <select name="csv_data" id="id_csv_data">
+            <option value="journey" selected>Journeys</option>
+            <option value="station">Stations</option>
+        </select>
+        {{form.as_p}}
+        <div class="checkbox_cls">
+            <label for="id_safe_btn">
+            <input type="checkbox" name="safe_create" id="id_safe_btn" size="30" value="safe_create"
+            style="padding:30px">
+            <span>Using 'Safe create' will wait for the whole file to be read until adding any data to the database.<br>
+                Will improve performance but does not create the objects until the whole CSV-file is read.</span></label><br>
+        </div>
+        <button type="submit" class="b ph4 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib">Confirm</button>
+    </form>
+</div>
 <br>
 <div id="progress-box" class="not-visible">
     

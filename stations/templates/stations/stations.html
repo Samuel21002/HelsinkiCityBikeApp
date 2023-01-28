@@ -25,7 +25,7 @@ Stations
                 {% if stations %}
                 <section class="bg-washed-blue">
                     <article class="ba b--black-10 br2 bg-white pa4 center">
-                        <ul id="id_station_list" class="list f6 pl0 mb0">
+                        <ul id="id_station_list" class="list f5">
 
                         <!-- All stations are rendered here or none if none are found  -->
                         {% for s in stations %}    
@@ -48,13 +48,13 @@ Stations
 
 <!-- The information section -->
 <section id="information">
-    <div class="columns pa4 is-full-hd bg-white my-4" style="max-height:38vh;">
-        <div class="column lighten-3 station_info_div vh-50">
+    <div class="columns pa4 is-full-hd bg-white my-4">
+        <div class="column lighten-3 station_info_div h50">
             <h3>Station information here</h3><br>
             <ul class="info_ul">
             </ul>
         </div>
-        <div class="column lighten-3 div_border vh-50">
+        <div class="column lighten-3 div_border is-halfheight">
             <h3>Most popular return stations from this point:</h3><br>
             <table id="id_station_dep_most_pop_ret" class="table is-hoverable">
                 <tr>
@@ -63,7 +63,7 @@ Stations
             </table>
             
         </div>
-        <div class="column lighten-3 div_border vh-50">
+        <div class="column lighten-3 div_border is-halfheight">
             
             <h3>Most popular departure stations to this point:</h3><br>
             <table id="id_station_ret_most_pop_dep" class="table is-hoverable">
