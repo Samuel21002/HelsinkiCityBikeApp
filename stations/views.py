@@ -1,11 +1,12 @@
-from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
-from django.db.models import Q, Count
 from .models import Station
+from datetime import datetime
+from django.core.serializers import serialize
+from django.db.models import Q, Count
+from django.http import JsonResponse, HttpResponse
+from django.shortcuts import render
 from journeys.models import Journey
 import geojson
 import json
-from django.core.serializers import serialize
 
 def load_stations_page(request):
 
@@ -51,12 +52,25 @@ def render_geojson(request):
     return JsonResponse(geojson.dumps(feature_collection), safe=False, status=200)
 
 def get_station_names(request):
+    """ Passes station names to the search suggestions """
 
     stations = Station.objects.all().values('station_id', 'name_fin', 'name_swe', 'address_fin', 'address_swe'
     ).order_by("-name_fin")
     return JsonResponse(json.dumps(list(stations)), safe=False)
 
-def get_station_info(request, station_id):
+def get_station_info(request, station_id, month):
+    """ Takes in the selected station id and the month from a select box.
+    
+    Gets:
+     - Basic station information,
+     - Total number of journeys starting from the station,
+     - Total number of journeys ending at the station,
+     - The average distance of a journey starting from the station,
+     - The average distance of a journey ending at the station,
+     - Top 5 most popular return stations for journeys starting from the station and
+     - Top 5 most popular departure stations for journeys ending at the station,
+
+    and additionally filter them by month if a month is provided """
     
     context = {}
     station = Station.objects.get(station_id=station_id)
@@ -74,10 +88,16 @@ def get_station_info(request, station_id):
 
                 """ Total number of journeys starting from the station
                 Total number of journeys ending at the station """
-                stations_dep = Journey.objects.filter(departure_station=station
+                stations_dep = Journey.objects.filter(departure_station=station,
                 )
                 stations_ret = Journey.objects.filter(return_station=station
                 )
+
+                if month != 'All':
+                    month = datetime.strptime(month, '%b').month
+                    print(month)
+                    stations_dep = stations_dep.filter(departure_time__month=month)
+                    stations_ret = stations_ret.filter(return_time__month=month)
 
                 """ Counting the average distance of a journey starting from the station
                 and the average distance of a journey ending at the station or return 0

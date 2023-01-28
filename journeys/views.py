@@ -83,7 +83,6 @@ def search_journey(request):
             ordering = f'-{order_by}'
             sort_direction = 'asc'
         
-        print(order_by)
         journey_dep_station = request.GET.get("journey_dep_station", '')
         journey_ret_station = request.GET.get("journey_ret_station", '')
         date_matches = re.findall(r"(\d{2}/\d{2}/\d{4})", request.GET.get("daterange"))
@@ -136,7 +135,7 @@ def search_journey(request):
                 
                 s = s.query(q)  # Apply query
                 s = s[0:s.count()]  # Show all search results instead of just the 10 first
-                s = s.sort(ordering)
+                s = s.sort('departure_station_name.raw')
                 result = s.execute()  # Run query
                         
                 # Sets the new search into the temporary cache for 5 minutes
@@ -144,6 +143,7 @@ def search_journey(request):
         
         else:
             print("Old cache")
+
         
         # Sort the results
         #result = result.order_by(ordering)

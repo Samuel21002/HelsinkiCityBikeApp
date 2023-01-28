@@ -8,9 +8,12 @@ class JourneyDocument(Document):
     class Index:
         # Name of the Elasticsearch index
         name = 'journeys'
-        departure_station_name = fields.KeywordField(fielddata=True)
-        return_station_name = fields.KeywordField(fielddata=True)
-
+        departure_station_name = fields.TextField(
+                fields={'raw': fields.KeywordField()},
+                analyzer="keyword")
+        departure_station_name = fields.TextField(
+                fields={'raw': fields.KeywordField()},
+                analyzer="keyword")
         # See Elasticsearch Indices API reference for available settings
         settings = {'number_of_shards': 1,
                     'number_of_replicas': 0}

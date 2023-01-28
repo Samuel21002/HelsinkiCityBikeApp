@@ -49,33 +49,59 @@ Stations
 <!-- The information section -->
 <section id="information">
     <div class="columns pa4 is-full-hd bg-white my-4">
-        <div class="column lighten-3 station_info_div h50">
-            <h3>Station information here</h3><br>
+        <div class="column is-4 lighten-3 station_info_div is-halfheight pb-6" style="min-height: 30vh;">
+            <h3 class="b title is-6">Station information:</h3><br>
+            <input type="hidden" id="id_station">
             <ul class="info_ul">
+                <li>Station Name: -</li>
+                <li>Station Address: -</li>
+                <li>City: -</li>
+                <li>Operator: -</li>
+                <li>Departures from station: -</li>
+                <li>Returns to station: -</li>
+                <li>Average distance from the station: -</li>
+                <li>Average distance to the station: -</li>
             </ul>
         </div>
-        <div class="column lighten-3 div_border is-halfheight">
-            <h3>Most popular return stations from this point:</h3><br>
+        <div class="column is-3 lighten-3 div_border is-halfheight pb-6">
+            <h3 class="b title is-6">Most popular return stations from this point:</h3><br>
             <table id="id_station_dep_most_pop_ret" class="table is-hoverable">
                 <tr>
-                    <td>No data</td>
+                    <td></td>
                 </tr>
             </table>
             
         </div>
-        <div class="column lighten-3 div_border is-halfheight">
+        <div class="column is-3 lighten-3 div_border is-halfheight pb-6">
             
-            <h3>Most popular departure stations to this point:</h3><br>
+            <h3 class="b title is-6">Most popular departure stations to this point:</h3><br>
             <table id="id_station_ret_most_pop_dep" class="table is-hoverable">
                 <tr>
-                    <td>No data</td>
+                    <td></td>
                 </tr>
             </table>
             
         </div>
+    <div class="column tr">
+        <label for="id_month">Month: </label>
+        <select name="month" class="formInput" id="id_month" disabled>
+            <option selected>All</option>
+            <option value="jan">January</option>
+            <option value="feb">February</option>
+            <option value="mar">March</option>
+            <option value="apr">April</option>
+            <option value="may">May</option>
+            <option value="jun">June</option>
+            <option value="jul">July</option>
+            <option value="aug">August</option>
+            <option value="sep">September</option>
+            <option value="oct">October</option>
+            <option value="nov">November</option>
+            <option value="dec">December</option>
+        </select>
     </div>
 </section>
-    
+
 
 <script src="{% static 'stations/script_stations.js' %}"></script>
 
