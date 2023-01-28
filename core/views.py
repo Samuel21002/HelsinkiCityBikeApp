@@ -16,14 +16,14 @@ def celery_progress_terminate(request, task_id):
     """ For terminating a celery upload 
         Returns a JSON of the upload state. """
     task = AsyncResult(task_id)
+    csv_obj = Csv.objects.get(task_id=task.task_id)
 
-    obj = Csv.objects.get(task_id=task.task_id)
-    if obj:
+    if csv_obj:
         task.revoke()
         app.control.revoke(task.task_id, terminate=True, signal='SIGKILL')
-        obj.delete()
+        csv_obj.delete()
         
-    return JsonResponse(json.dumps({'task_status': "Task has been terminated!"}), safe=False)
+    return JsonResponse(json.dumps({'task_status': "Upload has been cancelled!"}), safe=False)
 
 def check_celery_status(request):
     """ A context processor shared across the whole project so that the ongoing uploads

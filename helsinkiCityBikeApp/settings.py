@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.staticfiles',
     'django_celery_results',
-    'django_elasticsearch_dsl',
     'celery_progress',
     'core',
     'csvimport',
@@ -82,12 +81,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'helsinkiCityBikeApp.wsgi.application'
-
-ELASTICSEARCH_DSL={
-    'default': {
-        'hosts': 'localhost:9200'
-    },
-}
 
 # LOGGING = {
 #     'version': 1,
@@ -173,7 +166,6 @@ STATICFILES_DIRS = [
    os.path.join(BASE_DIR, 'journeys/static/journeys'),
    os.path.join(BASE_DIR, 'stations/static/stations')
    ]
-
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'media/csv_uploads/')

@@ -74,12 +74,10 @@ class StationsTests(TestCase):
             (LATER) tests that all station marker have been rendered from the geoJSON to the map """
 
         self.browser.visit(reverse('stations:stations'))
-        # self.browser.execute_script('script.js')
         self.assertTrue(self.browser.is_element_present_by_id('id_map'))
         self.assertTrue(self.browser.is_element_present_by_text('Testiasema 1, Teststation 1'))
         self.assertTrue(self.browser.is_element_present_by_text('Most popular departure stations to this point:'))
         self.assertTrue(self.browser.is_element_present_by_text('Most popular return stations from this point:'))
-        # print(self.browser.html)
 
     def tearDown(self):
         self.browser.quit()

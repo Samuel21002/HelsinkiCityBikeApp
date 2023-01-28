@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
 {%block title%}
 Index
@@ -6,6 +7,16 @@ Index
 
 {%block content%}
 
-<h1>Index Page</h1>
+<div class="is-flex is-flex-direction-column tc">
+    <h1>Index Page</h1>
+    <div>
+            <h3>Welcome to the CityBikeApp beta-version!</h3><br>
+            <p>I hope you enjoy your stay!<br>
+                Get started by navigating to the <i>Journeys</i> or Stations</i> page or upload a CSV.
+    </div>
+    <div>
+        <img src="{% static 'core/images/citybikeapp-logo-black-transparent-bg.png' %}" height=200 width=200>
+    </div>
+</div>
 
 {%endblock content%}

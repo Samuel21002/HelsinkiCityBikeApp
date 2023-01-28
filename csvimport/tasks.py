@@ -5,7 +5,6 @@ from datetime import datetime
 from decimal import Decimal
 from journeys.models import Journey
 from stations.models import Station
-from time import sleep
 import csv
 import re
 import warnings
@@ -203,7 +202,10 @@ def upload_csv(self, file_path, csv_data_type, upload_type):
                 else:
                     # In case a csv-row is empty
                     print(f"Row {i+1} : Field empty")
-
+                
+                # Updates the progress after every iteration and passes the current state (in percentages) to the front end
+                progress_recorder.set_progress(
+                    i + 1, rowcount, f'{round(((i+1) / rowcount) * 100),2}%')
             # If there are leftover objects in the list after bulk_create or safe_create has finished creating all objects, add them to the db.
             if object_list:
                 Station.objects.bulk_create(object_list)

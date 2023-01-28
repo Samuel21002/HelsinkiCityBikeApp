@@ -95,7 +95,7 @@ def get_station_info(request, station_id, month):
 
                 if month != 'All':
                     month = datetime.strptime(month, '%b').month
-                    print(month)
+
                     stations_dep = stations_dep.filter(departure_time__month=month)
                     stations_ret = stations_ret.filter(return_time__month=month)
 

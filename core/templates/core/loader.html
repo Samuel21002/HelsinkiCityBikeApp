@@ -1,19 +1,19 @@
 {%load static%}
 
 <!-- Loader partial for every ongoing task -->
-<div id="loader_{{task_id}}" class="notification mh2">
+<div id="loader" class="notification pa-0 px-5 m-0 has-background-white">
   <div class='progress-wrapper h3'>
       <div class="columns">
-        <div id='progress-bar' class='column-is-9 p-2 progress-bar' style="background-color: #68a9ef; width: 0%; height: 1.2rem">
+        <div id='progress-bar' class='column progress-bar pa2' style="background-color: #ffffff; width: 0%; height: 0.8rem">
           &nbsp;
         </div>
       </div>
-      <div class="columns">
-        <div class="column-is-2">
-          <a class="button p-2 is-danger mh2 is-small" onClick="terminateProcess('{{task_id}}')">Cancel</a>
+      <div class="columns is-flex is-justify-content-left is-align-content-center">
+        <div class="mt2 pa0">
+          <a class="button is-danger mt1 is-small" onClick="terminateProcess('{{task_id}}')">Stop</a>
         </div>
-        <div class="column-is-10">
-          <div id="progress-bar-message">Waiting for progress to start...</div>
+        <div class="is-align-self-center mt-2 ml-2 pa0" id="progress-bar-message">
+          Waiting for progress to start...
         </div>
       </div>
   </div>
@@ -22,25 +22,20 @@
   <script>
     document.addEventListener("DOMContentLoaded", function () {
     var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
-    const loader = document.getElementById('loader')
-    loader.classList.toggle('show_loader')
     CeleryProgressBar.initProgressBar(progressUrl, {
       pollInterval: 1000,
-      onError: function() {
-          document.getElementById('progress-bar-message').innerHTML = 'Juuuu'
-      }
-
+      });
     });
-  });
     const terminateProcess = async(task_id) => {
       console.log("Process terminated")
       try {
         const response = await fetch(`/celery_progress_terminate/${task_id}`)
         const data = await response.json()
         result = JSON.parse(data)
-        let el = document.getElementById('loader_{{task_id}}').innerHTML = 
-        `<div id="progress-bar-message">${result.task_status}</div>`
 
+        // Clear the loader instance and write 'Task Terminated'
+        let el = document.getElementById('loader').innerHTML = 
+        `<div id="progress-bar-message">${result.task_status}</div>`
         return data
       } catch (e) {
         console.error('Error!')

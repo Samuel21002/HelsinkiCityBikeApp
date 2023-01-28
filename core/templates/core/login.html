@@ -11,7 +11,7 @@ Login
 <div id="id_form_group">
     {% if form.errors %}
     <div class="mt-2 alert alert-warning alert-dismissible fade show" role="alert">
-        Lomakkeen tiedoista löytyi virhe.
+        Login failed, invalid field values!
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
         </button>
     </div>
@@ -28,15 +28,7 @@ Login
     for (input of inputs) {
         input.classList.add("input-reset", "ba", "b--black-20", "pa2", "mb2", "db", "w-20");
     }
-/*    var div = document.getElementById("id_form_group");
-    var form = div.getElementsByTagName("form")[0];
-    form.classList.add("measure", "center")
-    var label = div.getElementsByTagName("label")[0];
-    label.classList.add("db", "fw6", "lh-copy", "f6")
-    var input = div.getElementsByTagName("input")[0];
-    input.classList.add("input-reset", "ba", "b--black-20", "pa2", "mb2", "db" )*/
-    
-    
+
 </script>
 
 {%endblock content%}

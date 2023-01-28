@@ -11,7 +11,7 @@ Stations
 <!-- The map -->
 <section id="map_and_stations_view">
     <div class="columns is-full-hd">
-        <div class="column is-7 vh-50" id="id_map">
+        <div class="column is-7 h6" id="id_map">
         </div>
         <div class="column is-5 g-0 lighten-5 vh-50">
             <div class="field">
@@ -21,7 +21,7 @@ Stations
             </div>
 
             <!-- The search element -->
-            <div class="results" style="max-height:38vh; overflow-y:scroll;">
+            <div class="results" style="max-height:36vh; overflow-y:scroll;">
                 {% if stations %}
                 <section class="bg-washed-blue">
                     <article class="ba b--black-10 br2 bg-white pa4 center">
@@ -48,8 +48,8 @@ Stations
 
 <!-- The information section -->
 <section id="information">
-    <div class="columns pa4 is-full-hd bg-white my-4">
-        <div class="column is-4 lighten-3 station_info_div is-halfheight pb-6" style="min-height: 30vh;">
+    <div class="columns pa4 is-full-hd bg-white mt-3 h6">
+        <div class="column is-4 lighten-3 station_info_div is-halfheight pb-6 tc">
             <h3 class="b title is-6">Station information:</h3><br>
             <input type="hidden" id="id_station">
             <ul class="info_ul">
@@ -63,28 +63,28 @@ Stations
                 <li>Average distance to the station: -</li>
             </ul>
         </div>
-        <div class="column is-3 lighten-3 div_border is-halfheight pb-6">
+        <div class="column is-3 is-mobile tc lighten-3 div_border is-halfheight pb-6">
             <h3 class="b title is-6">Most popular return stations from this point:</h3><br>
-            <table id="id_station_dep_most_pop_ret" class="table is-hoverable">
+            <table id="id_station_dep_most_pop_ret" class="table center is-hoverable">
                 <tr>
                     <td></td>
                 </tr>
             </table>
             
         </div>
-        <div class="column is-3 lighten-3 div_border is-halfheight pb-6">
+        <div class="column is-3 is-mobile tc lighten-3 div_border is-halfheight pb-6">
             
             <h3 class="b title is-6">Most popular departure stations to this point:</h3><br>
-            <table id="id_station_ret_most_pop_dep" class="table is-hoverable">
+            <table id="id_station_ret_most_pop_dep" class="table center is-hoverable">
                 <tr>
                     <td></td>
                 </tr>
             </table>
             
         </div>
-    <div class="column tr">
+    <div class="column tc">
         <label for="id_month">Month: </label>
-        <select name="month" class="formInput" id="id_month" disabled>
+        <select name="month" class="w4" id="id_month" disabled>
             <option selected>All</option>
             <option value="jan">January</option>
             <option value="feb">February</option>

@@ -67,9 +67,10 @@ Journeys
 </div>
 
 <!-- Search Results -->
-<div class="columns is-full-hd mh-30">
-    <ul class="table w-100" cellspacing="0">
-        <div class="table-container" style="overflow-y:scroll">
+<div class="columns is-full-hd mh-40">
+    <div class="column is-10 pa0">
+        <ul class="table w-100 ba b--black-20" cellspacing="0">
+            <div class="table-container h5" style="overflow-y:scroll">
                 {%if search_results %}
                 <tbody class="lh-copy">
                     {% include 'journeys/search_partial.html' %}
@@ -77,38 +78,40 @@ Journeys
                 {%endif%}
             </div>
         </ul>
-        {% comment %} <table class="table w-100" cellspacing="0">
-            <thead>
-                <tr>
-                    <th>Journey <i class="fa-solid fa-map"></i></th>
-                    <th><a href="{% querystring discard 'order_by' %}&order_by=departure_time&direction={{direction}}">Departure <i class="fa-solid fa-person-biking"></i></th></a>
-                    <th><a href="{% querystring discard 'order_by' %}&order_by=return_time&direction={{direction}}">Return <i class="fa-solid fa-person-biking"></i></th></a>
-                    <th><a href="{% querystring discard 'order_by' %}&order_by=departure_station_name&direction={{direction}}">Departure Station <i class="fa-solid fa-location-dot"></i></th></a>
-                    <th><a href="{% querystring discard 'order_by' %}&order_by=return_station_name&direction={{direction}}">Return Station <i class="fa-solid fa-location-dot"></i></th></a>
-                    <th><a href="{% querystring discard 'order_by' %}&order_by=covered_distance&direction={{direction}}">Covered Distance <small>(m)</small> <i class="fa-solid fa-people-arrows"></i></th></a>
-                    <th><a href="{% querystring discard 'order_by' %}&order_by=duration&direction={{direction}}">Duration <i class="fa-solid fa-hourglass-half"></i></th></a>
-                </tr>
-            </thead>
-            <div class="table-container" style="overflow-y:scroll">
-                <tbody class="lh-copy">
-                        {% include 'journeys/search_partial.html' %}
-                </tbody>
-            </div>
-        </table> {% endcomment %}
     </div>
-    <div class="columns is-full-hd is-vcentered mx-3 mw-12">     
-        <!-- Pagination rendered dynamically -->
-        {%if search_results %}
-        <div class="column is-10">
-            {% include 'journeys/pagination.html' %}
-        </div>
-        <div class="column is-2">
-            <h5>Your search matches {{search_results_count}} results</h5>
-        </div>
+    <div id="div_ordering" class="column is-2 ma3 tc bb bt b--black-20 my0">
+        <h2 class="h2">Order Results By:</h2>
+        <ul class="fa4 fw5">
+            <li><a href="{% querystring discard 'order_by' %}&order_by=departure_time&direction={{direction}}">
+                <i class="fa-solid fa-person-biking"></i>&nbsp; Departure</li></a>
+            <li><a href="{% querystring discard 'order_by' %}&order_by=return_time&direction={{direction}}">
+                <i class="fa-solid fa-person-biking"></i>&nbsp; Return</li></a>
+            <li><a href="{% querystring discard 'order_by' %}&order_by=departure_station_name&direction={{direction}}">
+                <i class="fa-solid fa-location-dot"></i>&nbsp; Departure Station</li></a>
+            <li><a href="{% querystring discard 'order_by' %}&order_by=return_station_name&direction={{direction}}">
+                <i class="fa-solid fa-location-dot"></i>&nbsp; Return Station</li></a>
+            <li><a href="{% querystring discard 'order_by' %}&order_by=covered_distance&direction={{direction}}">
+                <i class="fa-solid fa-people-arrows"></i>&nbsp; Covered Distance <small>(m)</small></li></a>
+            <li><a href="{% querystring discard 'order_by' %}&order_by=duration&direction={{direction}}">
+                <i class="fa-solid fa-hourglass-half"></i>&nbsp; Duration</li></a>
+        </ul>
     </div>
-{% else %}
-    <p class="text-center">No journeys</p>
-{% endif %}
+</div>
+<div class="columns is-full-hd is-vcentered mx-3 mw-12">     
+    <!-- Pagination rendered dynamically -->
+    {%if search_results %}
+    <div class="column is-8">
+        {% include 'journeys/pagination.html' %}
+    </div>
+    <div class="column is-4">
+        <h5>Your search matches {{search_results_count}} results</h5>
+    </div>
+    {% else %}
+    <div class="column is-4">
+        <p class="text-center">No journeys</p>
+    </div>
+    {% endif %}
+</div>
 </div>
         
 <script src="{% static 'journeys/leaflet_scripts/leaflet.geometryutil.js' %}"></script>
