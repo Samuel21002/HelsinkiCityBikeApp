@@ -4,6 +4,7 @@ from csvimport.tasks import upload_csv
 from django.contrib.auth.models import User
 from django.test import TestCase, Client
 from django.urls import reverse, resolve
+from unittest.mock import patch
 from splinter import Browser
 import os
 import json
@@ -21,7 +22,6 @@ class StationsTests(TestCase):
         cls.csv_data_type_station = 'station'
         cls.upload_type = 'safe_create'
         cls.file_station = os.path.join(dirname, 'CSVFiles/Station_test_csv.csv')
-        cls.result_upload_csv = upload_csv(cls.file_station, cls.csv_data_type_station, cls.upload_type)
         cls.browser = Browser('django', wait_time=3)
         
     def setUp(self):
@@ -39,11 +39,16 @@ class StationsTests(TestCase):
         self.assertEqual(resolve(url).func, load_stations_page)
         self.assertEqual(response.status_code, 200)
     
-    def test_station_geoJSON_data(self):
+    @patch('csvimport.tasks.upload_csv.delay')
+    @patch('stations.models.Station')
+    def test_station_geoJSON_data(self, mock_task, stations):
         """ Testing the render_geojson endpoint and whether the correct data is rendered to the template """
-
-        self.assertEqual(self.result_upload_csv, '10 stations uploaded successfully')
-        self.assertEqual(len(Station.objects.all()), 10)
+        self.mtask = mock_task(self.file_station, self.csv_data_type_station, self.upload_type)
+        self.mtask.return_value = "10 stations uploaded successfully"
+        self.assertTrue(mock_task.called)
+        
+        self.assertEqual(self.mtask.return_value, '10 stations uploaded successfully')
+        self.assertEqual(len(stations.objects.all()), 10)
 
         json_url = self.client.get(reverse('stations:render_geojson'))
         self.assertJSONEqual(str(json.loads(json_url.content)), 

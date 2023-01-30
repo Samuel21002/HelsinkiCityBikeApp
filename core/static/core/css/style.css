@@ -107,3 +107,8 @@ main {
 #burger-div {
   display: none;
 }
+
+.bg {
+  opacity:0.5;
+
+}

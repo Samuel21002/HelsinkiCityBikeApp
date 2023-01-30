@@ -17,6 +17,11 @@ class Journey (models.Model):
     covered_distance = models.DecimalField(max_digits=12, decimal_places=2, validators=[MinValueValidator(10, "Covered distance of the journey has to be bigger than 10.")])
     duration = models.PositiveIntegerField(validators=[MinValueValidator(10, "Duration of the journey has to be bigger than 10s.")])
 
+    # Returns the duration in hour-minute-second -format to the template
+    @property
+    def duration_format(self):
+        return timezone.timedelta(seconds=self.duration)
+        
     # For database indexing
     class Meta:
         indexes = [

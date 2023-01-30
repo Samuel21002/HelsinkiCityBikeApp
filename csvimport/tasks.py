@@ -220,4 +220,4 @@ def upload_csv(self, file_path, csv_data_type, upload_type):
 
     except Exception as e:
         print(f"Exception, something went wrong: {e}")
-        return "Something went wrong"
+        return f"Something went wrong: {e}"
