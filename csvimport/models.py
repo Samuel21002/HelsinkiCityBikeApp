@@ -1,7 +1,7 @@
 from django.core.validators import FileExtensionValidator
 from django.db import models
 
-# Model for the CSV-upload form, saving any uploaded CSVs to a local folder 'csv_uploads'
+# Model for the CSV-upload form
 class Csv(models.Model):
     file_name = models.FileField(upload_to='csv_uploads', validators=[FileExtensionValidator( ['csv'], "The file must be a CSV-file!" ) ])
     upload_date = models.DateTimeField(auto_now_add=True)

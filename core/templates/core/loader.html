@@ -12,33 +12,37 @@
         <div class="mt2 pa0">
           <a class="button is-danger mt1 is-small" onClick="terminateProcess('{{task_id}}')">Stop</a>
         </div>
-        <div class="is-align-self-center mt-2 ml-2 pa0" id="progress-bar-message">
+        <div class="is-align-self-center mt-2 ml-2 pa0 fw3 f6 w-75" id="progress-bar-message">
           Waiting for progress to start...
         </div>
       </div>
   </div>
 </div>
   
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-    var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
-    CeleryProgressBar.initProgressBar(progressUrl, {
-      pollInterval: 1000,
-      });
-    });
-    const terminateProcess = async(task_id) => {
-      console.log("Process terminated")
-      try {
-        const response = await fetch(`/celery_progress_terminate/${task_id}`)
-        const data = await response.json()
-        result = JSON.parse(data)
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+  var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
 
-        // Clear the loader instance and write 'Task Terminated'
-        let el = document.getElementById('loader').innerHTML = 
-        `<div id="progress-bar-message">${result.task_status}</div>`
-        return data
-      } catch (e) {
-        console.error('Error!')
-      }
-    } 
-  </script>
+  // Initializes the loader
+  CeleryProgressBar.initProgressBar(progressUrl, {
+    pollInterval: 1000,
+    });
+  });
+
+  // Passes the task_id to backend revoking / terminating the task
+  const terminateProcess = async(task_id) => {
+    console.log("Process terminated")
+    try {
+      const response = await fetch(`/celery_progress_terminate/${task_id}`)
+      const data = await response.json()
+      result = JSON.parse(data)
+
+      // Clear the loader div and write 'Task Terminated'
+      let el = document.getElementById('loader').innerHTML = 
+      `<div id="progress-bar-message">${result.task_status}</div>`
+      return data
+    } catch (e) {
+      console.error('Error!')
+    }
+  } 
+</script>

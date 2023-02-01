@@ -1,0 +1,5 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/b378be88-90f6-4032-bf1b-64f6b5e8e29e/AppServices/subscriptions/b378be88-90f6-4032-bf1b-64f6b5e8e29e/resourceGroups/appsvc_linux_centralus_basic/providers/Microsoft.Web/sites/helsinkiCityBikeApp",
+    "appService.deploySubpath": ".",
+    "python.analysis.typeCheckingMode": "basic"
+}

@@ -10,6 +10,7 @@ from celery.result import AsyncResult
 import json
 
 def load_index_page(request):
+    """ Opening the main index page """
     return render(request, 'core/index.html')
 
 def celery_progress_terminate(request, task_id):
@@ -26,9 +27,10 @@ def celery_progress_terminate(request, task_id):
     return JsonResponse(json.dumps({'task_status': "Upload has been cancelled!"}), safe=False)
 
 def check_celery_status(request):
-    """ A context processor shared across the whole project so that the ongoing uploads
+    """ A context processor shared across the whole project so the ongoing uploads
         are shown on every page as progress bars (as long as a user is logged in)
-        Returns only the 'PENDING' objects to the template """
+        Returns only the 'PENDING' tasks to the template and ignores the rest 
+        Saves the csv-file to the database if the upload is succesfully completed """
     
     tasks = Csv.objects.filter(activated=False)
 
@@ -41,10 +43,9 @@ def check_celery_status(request):
                 task.activated=True
                 task.save()      
                 tasks.exclude(task_id=obj.task_id)
-                print(tasks)
-            if obj.state != 'PENDING':
+            if bool(obj.state != '-') | bool(obj.state != 'PENDING'):
                 tasks.exclude(task_id=obj.task_id)
-    print(tasks)
+
     return {'tasks': tasks}
 
 def login(request):

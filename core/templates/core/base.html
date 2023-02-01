@@ -14,7 +14,7 @@
     <!-- jQuery -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
 
-    <!-- semantic UI -->
+    <!-- Semantic UI -->
     <link rel="stylesheet" type='text/css' href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.14/semantic.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 
@@ -36,6 +36,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
 
+    <!-- End of the title gets replaced depending on the page name user is located in -->
     <title>Helsinki City Bike App - {% block title %}{% endblock title %}</title>
   </head>
   <body>
@@ -117,6 +118,7 @@
 
     <!-- Main page -->
     <main>
+      <!-- Popup messages passed from the views.py file -->
       {% if messages %}
         {% for message in messages %}
         <article id="messages" class="message is-warning">
@@ -127,11 +129,15 @@
         </article>
         {%endfor%}
       {%endif%}
+      
+      <!-- Main container for every page partial -->
       <div class="container is-fluid pa4">
         {% block content %}
         {% endblock content %}
       </div>
     </main>
+
+    <!-- Footer, including the loader and button for toggling the loader div -->
     <footer class="w-100 pa1">
       <div class="loader_btn" style="position:fixed; bottom:0; right:0;">
         <button class="button-five ma3" onclick="toggle_loader()"><i class="fa-solid fa-upload"></i></button>
@@ -146,6 +152,8 @@
       {%endif%}
       </div>
     </footer>
+
     <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
+
   </body>
 </html>

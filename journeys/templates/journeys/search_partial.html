@@ -1,3 +1,6 @@
+<!-- Search result partial -->
+
+<!-- "The Header" -->
 <div class="columns ba b--black-10 pt2 h3-is-desktop h4-is-tablet h6-is-mobile center tc">
     <li class="column is-3-widescreen is-1-tablet is-mobile fw2 center h1"><small>Journey</small></li>
     <li class="column is-1-widescreen is-1-tablet is-mobile fw2 center h1"><small>Departure</small></li>
@@ -7,6 +10,8 @@
     <li class="column is-1-widescreen is-1-tablet is-mobile fw2 center h1"><small>Dist.(m)</small></li>
     <li class="column is-1-widescreen is-1-tablet is-mobile fw2 center h1"><small>Duration</small></li>
 </div>
+
+<!-- Every search match is rendered here -->
 {%for result in page_obj %}
     <div class="columns ba b--black-10 pt2 h3-is-desktop h4-is-tablet h6-is-mobile center tc">
         <li class="column is-3-widescreen is-2-tablet is-mobile pr3 f6 f6-ns fw6 ">

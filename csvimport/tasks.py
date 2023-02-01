@@ -13,6 +13,9 @@ import warnings
 warnings.filterwarnings("ignore", category=RuntimeWarning,
                         module='django.db.models.fields')
 
+@shared_task(bind=True)
+def testing(self):
+    return "YES SIR"
 
 @shared_task(bind=True)
 def upload_csv(self, file_path, csv_data_type, upload_type):
@@ -35,6 +38,8 @@ def upload_csv(self, file_path, csv_data_type, upload_type):
     # Returns percentage of the completed task to the page
     progress_recorder = ProgressRecorder(self)
     csv_data = []   # Temporary list for storing the CSV-rows
+    if not bool(upload_type == "safe_create") | bool(upload_type == "chunk_create"):
+        return "The upload type needs to be either Safe Create or Chunk Create"
 
     with open(file_path, 'r') as file:
         reader = csv.DictReader(file)
@@ -44,7 +49,8 @@ def upload_csv(self, file_path, csv_data_type, upload_type):
             pattern = pattern.replace("(", "\(").replace(")", "\)")
 
             if not re.search(pattern, ",".join(reader.fieldnames), re.IGNORECASE):
-                return "CSV invalid as it does not contain the correct fieldnames '['Departure','Return','Departure station id','Departure station name','Return station id','Return station name','Covered distance (m)','Duration (sec.)']' for a Journey upload."
+                raise Exception(
+                    "CSV invalid as it does not contain the correct fieldnames '['Departure','Return','Departure station id','Departure station name','Return station id','Return station name','Covered distance (m)','Duration (sec.)']' for a Journey upload.")
 
             # Fields in the CSV (and the index number): [0]Departure,[1]Return,[2]Departure station id,[3]Departure station name,[4]Return station id,[5]Return station name,[6]Covered distance (m),[7]Duration (sec.)
             # Fieldnames are reassigned just in case so the object data can be gathered from correctly named row key-names.
@@ -55,7 +61,8 @@ def upload_csv(self, file_path, csv_data_type, upload_type):
             pattern = "FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y"
             pattern = pattern.replace("(", "\(").replace(")", "\)")
             if not re.search(pattern, ",".join(reader.fieldnames), re.IGNORECASE):
-                return "CSV invalid as it does not contain the correct fieldnames '['FID','ID','Nimi','Namn','Name','Osoite','Adress','Kaupunki','Stad','Operaattor','Kapasiteet','x','y']' for a Station upload."
+                raise Exception(
+                    "CSV invalid as it does not contain the correct fieldnames '['FID','ID','Nimi','Namn','Name','Osoite','Adress','Kaupunki','Stad','Operaattor','Kapasiteet','x','y']' for a Station upload.")
 
             # Fields in the CSV (and the index number): [0]FID,[1]ID,[2]Nimi,[3]Namn,[4]Name,[5]Osoite,[6]Address,[7]Kaupunki,[8]Stad,[9]Operaattor,[10]Kapasiteet,[11]x,[12]y
             # Fieldnames are reassigned just in case so the object data can be gathered from correctly named row key-names.
@@ -121,10 +128,12 @@ def upload_csv(self, file_path, csv_data_type, upload_type):
                                     # Clear the list
                                     object_list = []
 
-                            print(f"Row {i+1} : Journey {row['Departure station id']}.{row['Departure station name']} - {row['Return station id']}.{row['Return station name']} created!")
+                            print(
+                                f"Row {i+1} : Journey {row['Departure station id']}.{row['Departure station name']} - {row['Return station id']}.{row['Return station name']} created!")
 
                         except Station.DoesNotExist:
-                            print(f"Row {i+1} : Station id included in the data does not exist, journey will not be created!")
+                            print(
+                                f"Row {i+1} : Station id included in the data does not exist, journey will not be created!")
                             continue
 
                         except ValueError as e:
@@ -150,7 +159,7 @@ def upload_csv(self, file_path, csv_data_type, upload_type):
             # Before task completion, checks if there are objects left in the object list, add them to the db and return a success message
             if object_list:
                 Journey.objects.bulk_create(object_list)
-            return f"{rowcount} journeys uploaded successfully"
+            return f"Journey upload successful!"
 
         elif csv_data_type == 'station':
 
@@ -191,7 +200,8 @@ def upload_csv(self, file_path, csv_data_type, upload_type):
                                 # Clear the list
                                 object_list = []
 
-                        print(f"Row {i+1} : Station {row['ID']}.{row['Nimi']} created!")
+                        print(
+                            f"Row {i+1} : Station {row['ID']}.{row['Nimi']} created!")
 
                     except ValueError as e:
                         print(f"Row {i+1} : Value error in row {i+1}! ", e)
@@ -202,21 +212,18 @@ def upload_csv(self, file_path, csv_data_type, upload_type):
                 else:
                     # In case a csv-row is empty
                     print(f"Row {i+1} : Field empty")
-                
+
                 # Updates the progress after every iteration and passes the current state (in percentages) to the front end
                 progress_recorder.set_progress(
                     i + 1, rowcount, f'{round(((i+1) / rowcount) * 100),2}%')
             # If there are leftover objects in the list after bulk_create or safe_create has finished creating all objects, add them to the db.
             if object_list:
                 Station.objects.bulk_create(object_list)
-            return f"{rowcount} stations uploaded successfully"
+            return f"Station upload successful!"
 
         # Just in case neither Journey or Station upload_type is chosen
         else:
             print("Select a CSV containing proper values of either Stations or Journeys")
-
-        # Completion message
-        return "CSV upload completed"
 
     except Exception as e:
         print(f"Exception, something went wrong: {e}")

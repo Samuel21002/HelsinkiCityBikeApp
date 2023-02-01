@@ -4,7 +4,7 @@ from django.db.models.indexes import Index
 from django.utils import timezone
 from django.core.validators import MinValueValidator
 
-# Departure,Return,Departure station id,Departure station name,Return station id,Return station name,Covered distance (m),Duration (sec.)
+# CSV Fields: Departure,Return,Departure station id,Departure station name,Return station id,Return station name,Covered distance (m),Duration (sec.)
 class Journey (models.Model):
 
     id = models.BigAutoField(primary_key=True)

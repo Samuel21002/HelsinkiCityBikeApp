@@ -4,30 +4,33 @@
 {%block title%}
 Stations
 {%endblock title%}
-
-<!-- Main page -->
 {% block content %}
 
-<!-- The map -->
 <section id="map_and_stations_view">
     <div class="columns is-full-hd">
+
+        <!-- The map -->
         <div class="column is-7 h6" id="id_map">
         </div>
+
+        <!-- Search "form" -->
         <div class="column is-5 g-0 lighten-5 vh-50">
             <div class="field">
                 <h4>Find Stations</h4>
-                <input type="text" class="input" placeholder="Station name" id="id_search" required>
+                <form method="get">
+                <input type="text" class="input" placeholder="Station name" name="station_search" id="id_search">
+                </form>
                 <ul class="suggestions"></ul>
             </div>
 
-            <!-- The search element -->
+            <!-- The search results as a list of stations -->
             <div class="results" style="max-height:36vh; overflow-y:scroll;">
                 {% if stations %}
                 <section class="bg-washed-blue">
                     <article class="ba b--black-10 br2 bg-white pa4 center">
                         <ul id="id_station_list" class="list f5">
 
-                        <!-- All stations are rendered here or none if none are found  -->
+                        <!-- All stations are rendered here or none if none are found -->
                         {% for s in stations %}    
                         <li class="pv2">
                             <a onClick="get_station_info({{s.station_id}})" class="link blue lh-title">
@@ -46,7 +49,7 @@ Stations
     </div>
 </section>
 
-<!-- The information section -->
+<!-- The station information section -->
 <section id="information">
     <div class="columns pa4 is-full-hd bg-white mt-3 h6">
         <div class="column is-4 lighten-3 station_info_div is-halfheight pb-6 tc">
@@ -63,6 +66,7 @@ Stations
                 <li>Average distance to the station: -</li>
             </ul>
         </div>
+
         <div class="column is-3 is-mobile tc lighten-3 div_border is-halfheight pb-6">
             <h3 class="b title is-6">Most popular return stations from this point:</h3><br>
             <table id="id_station_dep_most_pop_ret" class="table center is-hoverable">
@@ -72,8 +76,8 @@ Stations
             </table>
             
         </div>
+
         <div class="column is-3 is-mobile tc lighten-3 div_border is-halfheight pb-6">
-            
             <h3 class="b title is-6">Most popular departure stations to this point:</h3><br>
             <table id="id_station_ret_most_pop_dep" class="table center is-hoverable">
                 <tr>
@@ -82,6 +86,8 @@ Stations
             </table>
             
         </div>
+
+    <!-- Sorting by month -->
     <div class="column tc">
         <label for="id_month">Month: </label>
         <select name="month" class="w4" id="id_month" disabled>
@@ -101,7 +107,6 @@ Stations
         </select>
     </div>
 </section>
-
 
 <script src="{% static 'stations/script_stations.js' %}"></script>
 

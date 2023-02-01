@@ -9,21 +9,21 @@ import geojson
 import json
 
 def load_stations_page(request):
-
+    """ Loading the stations page, returning all station objects in the div """
     context = {}
     stations = Station.objects.all()
 
     context.update({
         'stations': stations,
-        'search_results': Q(),     # Empty until a search is performed
+        'search_results': Q(),  # Empty until a search is performed
     })
 
     return render(request, 'stations/stations.html', context)
 
 
 def render_geojson(request):
-    """ Renders all stations from the database and creates every object into a geoJSON string. That string
-    is passed on and displayed on a Leaflet map in the template.
+    """ Renders all stations from the database and creates every object into a geoJSON string.
+    That string is passed on and displayed on a Leaflet map in the template.
     Objects are appended to a list and added to the end of the GeoJSON after 'FeatureCollection' is declared
 
     Returns a JSONResponse fetched by the front end """
@@ -88,10 +88,8 @@ def get_station_info(request, station_id, month):
 
                 """ Total number of journeys starting from the station
                 Total number of journeys ending at the station """
-                stations_dep = Journey.objects.filter(departure_station=station,
-                )
-                stations_ret = Journey.objects.filter(return_station=station
-                )
+                stations_dep = Journey.objects.filter(departure_station=station)
+                stations_ret = Journey.objects.filter(return_station=station)
 
                 if month != 'All':
                     month = datetime.strptime(month, '%b').month
@@ -133,8 +131,8 @@ def get_station_info(request, station_id, month):
             
             except:
                 return HttpResponse("Station or journeys not found or value-error occurred")
-        # Add ability to filter all the calculations per month ?
 
-        # Convert each query to JSON before returning
+        # Convert each query to JSON before returning a succesful JSON
         return JsonResponse(json.dumps(context), content_type="application/json", safe=False)
+        
     return HttpResponse("No stations found")

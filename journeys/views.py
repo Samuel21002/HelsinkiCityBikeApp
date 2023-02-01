@@ -2,20 +2,15 @@ from .models import Journey
 from django.core.cache import cache
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Max, Q
-from django.db.models.functions import Lower
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.utils.timezone import datetime
 from stations.models import Station
-#from elasticsearch_dsl import Search, Q
-
 import geojson
 import re
 
-# Create your views here.
 def load_journeys_page(request):
     """ Index page for the journeys app"""
-    
     context = {}
     stations = Station.objects.all()
 
@@ -27,11 +22,11 @@ def load_journeys_page(request):
     return render(request, 'journeys/journeys.html', context)
 
 def get_journey_info(request, id): 
-    """ Gets the journey info and renders it on the map as a layer
-        Returns a JSON object"""
+    """ Gets the journey info and returns it to the leaflet map as a new layer.
+        
+        Returns a JSON object containing the data"""
     
     journey = Journey.objects.get(pk=id)
-    print(journey)
     dep_station = Station.objects.get(pk=journey.departure_station.pk)
     ret_station = Station.objects.get(pk=journey.return_station.pk)
 
@@ -64,18 +59,21 @@ def get_journey_info(request, id):
 
 def search_journey(request):
     """ The HTTPRequest from the page containing the necessary search parameters for database queries. Stores
-        the search result in the cache (MemCached) in order to quickly sort the results from the page.
+        the search result in the cache (MemCached) in order to sort the results from the page quicker.
 
         Returns a pagination object along with the search results and the query parameters for rendering
-        the pagination href's """
+        the correct pagination href's """
     
     context = {}
     get_copy = request.GET.copy()
+
+    """ 'query' passes the search query URL back to the template in order to create correct href-links,
+            for the pagination elements """
     query = get_copy.pop('page', True) and get_copy.urlencode()
 
     try:
-        order_by = request.GET.get('order_by', 'departure_station_name')  # Ordering criteria
-        sort_direction = request.GET.get('direction', 'desc')
+        order_by = request.GET.get('order_by', 'departure_station_name')  # Ordering criteria from the order_by query
+        sort_direction = request.GET.get('direction', 'desc')   # Sorting criteria (asc or desc)
         if sort_direction == 'asc':
             ordering = f'{order_by}'
             sort_direction = 'desc'
@@ -83,12 +81,12 @@ def search_journey(request):
             ordering = f'-{order_by}'
             sort_direction = 'asc'
         
-        journey_dep_station = request.GET.get("journey_dep_station", '')
-        journey_ret_station = request.GET.get("journey_ret_station", '')
-        date_matches = re.findall(r"(\d{2}/\d{2}/\d{4})", request.GET.get("daterange"))
-        dates = [datetime.strptime(date_string, "%m/%d/%Y").date().strftime("%Y-%m-%d") for date_string in date_matches]
-        distance = request.GET.getlist("distance")
-        duration = request.GET.getlist("duration")
+        journey_dep_station = request.GET.get("journey_dep_station", '')  # Departure station
+        journey_ret_station = request.GET.get("journey_ret_station", '')  # Return station
+        date_matches = re.findall(r"(\d{2}/\d{2}/\d{4})", request.GET.get("daterange")) # Regex for separating the date range into 2 list values
+        dates = [datetime.strptime(date_string, "%m/%d/%Y").date().strftime("%Y-%m-%d") for date_string in date_matches]  # Converts the above dates to the appropriate format
+        distance = request.GET.getlist("distance")  # Covered distance
+        duration = request.GET.getlist("duration")  # Duration
 
         distance[0] = 10 if int(distance[0]) < 10 else distance[0]  # For validating the minimum distance
         duration[0] = 10 if int(duration[0]) < 10 else duration[0]  # For validating the minimum duration
@@ -99,13 +97,10 @@ def search_journey(request):
         # Create a query object
         multiple_q = Q()
 
-        """ 'query' passes the search query URL back to the template in order to create correct href-links,
-            for the pagination elements
-        """
-
+        # If a query is already found in the cache, it gets returned right away
         result = cache.get('search_query_' + query)
 
-        # If the search result is not found in the cache, make a new query to the db
+        # If a search result is not found in the cache, make a new query to the db
         if result is None:
             print("New cache")
 
@@ -117,8 +112,9 @@ def search_journey(request):
                 if journey_ret_station:
                     multiple_q &= Q(return_station_name__icontains=journey_ret_station)
 
-                """ Applies the date range filtering departure and / or return station results
-                    If no upper bound is selected, datetime now is selected, 
+                """ Applies the date range filtering departure and / or return station results.
+                    If no upper bound is selected, datetime now is selected.
+
                     If no upper bound is selected for duration or distance, the maximum value from the database
                     is selected. "10" is the minimum value set for distance and duration.
                 """
@@ -138,7 +134,7 @@ def search_journey(request):
                 result = Journey.objects.filter(multiple_q).defer(
                     'id', 'departure_station_id', 'return_station_id').distinct()
                 
-                # Sets the new search into the temporary cache for 5 minutes
+                # Sets the new search into the temporary cache for 5 minutes (300sec)
                 cache.set('search_query_' + query, result, 300)
         
         else:

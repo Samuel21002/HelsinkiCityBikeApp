@@ -10,9 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-from pathlib import Path
-import pymysql
 from dotenv import load_dotenv
+from pathlib import Path
 import os
 
 load_dotenv()
@@ -27,11 +26,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
-
-
+ALLOWED_HOSTS = ['helsinkicitybikeapp.azurewebsites.net', '127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://helsinkicitybikeapp.azurewebsites.net', 'http://helsinkicitybikeapp.azurewebsites.net']
+CORS_ALLOWED_ORIGINS = ['https://helsinkicitybikeapp.azurewebsites.net', 'http://helsinkicitybikeapp.azurewebsites.net']
+CSRF_COOKIE_DOMAIN = ['https://helsinkicitybikeapp.azurewebsites.net', 'http://helsinkicitybikeapp.azurewebsites.net']
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 # Application definition
 
 INSTALLED_APPS = [
@@ -52,10 +53,10 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # 'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -83,31 +84,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'helsinkiCityBikeApp.wsgi.application'
 
-# LOGGING = {
-#     'version': 1,
-#     'filters': {
-#         'require_debug_true': {
-#             '()': 'django.utils.log.RequireDebugTrue',
-#         }
-#     },
-#     'handlers': {
-#         'console': {
-#             'level': 'DEBUG',
-#             'filters': ['require_debug_true'],
-#             'class': 'logging.StreamHandler',
-#         }
-#     },
-#     'loggers': {
-#         'django.db.backends': {
-#             'level': 'DEBUG',
-#             'handlers': ['console'],
-#         }
-#     }
-# }
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# Production
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'db-hcbapp',
+#         'USER': 'zameezy@dc-hcbapp',
+#         'PASSWORD': os.getenv('DB_PASSWORD'),
+#         'HOST': os.getenv('DB_HOST'),
+#         'PORT': '5432',
+#         'OPTIONS': {"sslmode":"require"}
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -116,7 +107,7 @@ DATABASES = {
         'PASSWORD': 'postgres',
         'HOST': 'localhost',
         'PORT': '5432'
-    }
+    },
 }
 
 # Password validation
@@ -161,8 +152,8 @@ CACHES = {
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-# STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_DIRS = [
    os.path.join(BASE_DIR, 'core/static'),
@@ -185,4 +176,5 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = "Europe/Helsinki"
 CELERY_RESULT_BACKEND = 'django-db'
+CELERY_STORE_ERRORS_EVEN_IF_IGNORED = True
 CELERY_RESULT_EXTENDED = True
