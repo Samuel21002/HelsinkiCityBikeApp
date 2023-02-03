@@ -66,6 +66,7 @@ def search_journey(request):
     
     context = {}
     get_copy = request.GET.copy()
+    page_number = request.GET.get('page', 1)
 
     """ 'query' passes the search query URL back to the template in order to create correct href-links,
             for the pagination elements """
@@ -98,7 +99,7 @@ def search_journey(request):
         multiple_q = Q()
 
         # If a query is already found in the cache, it gets returned right away
-        result = cache.get('search_query_' + query)
+        result = cache.get(f'search_query_{query}_{page_number}')
 
         # If a search result is not found in the cache, make a new query to the db
         if result is None:
@@ -133,32 +134,31 @@ def search_journey(request):
             # Database Query passed to the filter.
             result = Journey.objects.filter(multiple_q).defer(
                 'id', 'departure_station_id', 'return_station_id').distinct()
+                
+            result = result.order_by(ordering)
+            paginated_filtered_releases = Paginator(result, 10)
+            page_obj = paginated_filtered_releases.page(page_number)
+            page_range = paginated_filtered_releases.get_elided_page_range(number=page_number)
             
             # Sets the new search into the temporary cache for 5 minutes (300sec)
-            cache.set('search_query_' + query, result, 300)
-        
+            try:
+                page_obj = paginated_filtered_releases.page(page_number)
+            except PageNotAnInteger:
+                page_obj = paginated_filtered_releases.page(10)
+            except EmptyPage:
+                page_obj = paginated_filtered_releases.page(paginated_filtered_releases.num_pages)
+            cache.set(f'search_query_{query}_{page_number}', page_obj, 300)
+            
+            context.update({ 'page_range': page_range})
+
         else:
             print("Getting old query from cache")
-        result = result.order_by(ordering) 
-
-        # Pagination
-        paginated_filtered_releases = Paginator(result, 10)
-        page_number = request.GET.get('page', 1) 
-
-        page_range = paginated_filtered_releases.get_elided_page_range(number=page_number)  
-
-        try:
-            page_obj = paginated_filtered_releases.page(page_number)
-        except PageNotAnInteger:
-            page_obj = paginated_filtered_releases.page(10)
-        except EmptyPage:
-            page_obj = paginated_filtered_releases.page(paginated_filtered_releases.num_pages)
+            page_obj = result
 
         context.update({
             'search_results' : result, 
             'search_results_count' : len(result), 
             'page_obj' : page_obj,
-            'page_range': page_range,
             'query' : query,
             'order_by': order_by,
             'direction': sort_direction

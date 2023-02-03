@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         obj.station_dep_most_pop_ret.forEach((element) => {
           let tr = document.createElement('tr')
           let td = document.createElement('td')
-          td.textContent = `${element.station_count}, ${element.return_station_name}`
+          td.textContent = `(${element.station_count})  ${element.return_station_name}`
           tr.appendChild(td)
           table_station_most_pop_ret.appendChild(tr)
         })
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
       obj.station_ret_most_pop_dep.forEach((element) => {
         let tr = document.createElement('tr')
         let td = document.createElement('td')
-        td.textContent = `${element.station_count}, ${element.departure_station_name}`
+        td.textContent = `(${element.station_count})  ${element.departure_station_name}`
         tr.appendChild(td)
         table_station_most_pop_dep.appendChild(tr)
       })

@@ -1,3 +1,7 @@
+window.onsubmit = function(){ 
+    document.getElementById("load-wheel").style.display = "block" ;
+} 
+
 const get_station_geoJson = '/stations/render_geojson';
 
 /* DateTime -range picker */

@@ -92,6 +92,7 @@ class StationPageTests(LiveServerTestCase):
 
     def setUp(self):
         """ Creates an user and Station & Journey objects """
+
         self.user = User.objects.create_user(
             'testuser', 'test@gmail.com', 'testpass')
 
@@ -151,12 +152,12 @@ class StationPageTests(LiveServerTestCase):
             duration=159
         )
 
-    @override_settings(CSRF_TRUSTED_ORIGINS=settings.CSRF_TRUSTED_ORIGINS.append('http://localhost:61650/'))
     def test_page(self):
         """ LiveServerTestCases test the interaction of the stations page by creating stations and journeys,
         searching from the stations list, clicking on the station to retrieve information, and to display
         the top departure stations by a defined month"""
 
+        # Logs in the user
         self.maxDiff = None
         self.selenium.get('%s%s' % (self.live_server_url, '/stations/'))
         username_input = self.selenium.find_element(By.NAME, "username")
@@ -165,10 +166,12 @@ class StationPageTests(LiveServerTestCase):
         password_input.send_keys('testpass')
         self.selenium.find_element(By.ID, 'id_submit').click()
 
+        # Checks if the map element is present on the page
         time.sleep(2)
         map = self.selenium.find_element(By.ID, 'id_map')
         self.assertTrue(map)
 
+        # Makes a search of 'Testiasema 8' and asserts that it is the only element in the search div
         time.sleep(2)
         search_input = self.selenium.find_element(By.ID, "id_search")
         search_input.send_keys('Testiasema 8')
@@ -180,14 +183,13 @@ class StationPageTests(LiveServerTestCase):
           <span class="db black-60">Testikatu 8, Testgatan 8</span>
       </a>
       </li>'''
-
         time.sleep(1)
         self.assertEqual(search_innerHtml, expected_text)
         search_input.clear()
 
+        # Clicks on the 'Testiasema 5' -link displaying the info in the div and asserts the innerHTML
         self.selenium.find_element(
             By.PARTIAL_LINK_TEXT, "Testiasema 5, Teststation 5").click()
-
         time.sleep(2)
         ul_innerHtml = self.selenium.find_element(
             By.XPATH, "//ul[@class='info_ul']").get_attribute("innerHTML").strip()
@@ -201,24 +203,22 @@ class StationPageTests(LiveServerTestCase):
       <li>Average distance to the station:&nbsp;&nbsp;<strong>750</strong></li>'''
         self.assertEqual(ul_innerHtml, expected_text)
 
+        # Finds the list of Most popular return stations of 'Testiasema 5' and asserts the innerHTML
         station_top_list = self.selenium.find_element(
             By.ID, "id_station_dep_most_pop_ret")
         station_top_list_html = station_top_list.get_attribute(
             "innerHTML").strip()
-
         expected_text = '<tr><td>1, Testiasema 3</td></tr><tr><td>1, Testiasema 5</td></tr>'
-
         time.sleep(2)
         self.assertEqual(station_top_list_html, expected_text)
 
+        # Filters the results by month, thus should only display one result from 'may'.
         select_element = Select(self.selenium.find_element(By.NAME, 'month'))
         select_element.select_by_value('may')
-
         time.sleep(1)
         station_top_list_html_2 = station_top_list.get_attribute(
             "innerHTML").strip()
         expected_text = '<tr><td>1, Testiasema 5</td></tr>'
-
         time.sleep(2)
         self.assertEqual(station_top_list_html_2, expected_text)
 

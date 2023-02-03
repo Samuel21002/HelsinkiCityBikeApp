@@ -1,0 +1,14 @@
+﻿FID,ID,Nimi,Namn,Name,Osoite,Adress,Kaupunki,Stad,Operaattor,Kapasiteet,x,y
+1,1,Testiasema 1,Teststation 1,Teststation 1,Testiasemantie 1,Teststationsgatan 1,Testilä,Testmo,TestBike Finland,10,24.840319,60.16582
+2,2,Testiasema 2,Teststation 2,Teststation 2,Testiasemantie 2,Teststationsgatan 2,Testilä,Testmo,TestBike Finland,10,24.840319,60.16582
+3,3,Testiasema 3,Teststation 3,Teststation 3,Testiasemantie 3,Teststationsgatan 3,Testilä,Testmo,TestBike Finland,10,24.840319,60.16582
+4,4,Testiasema 4,Teststation 4,Teststation 4,Testiasemantie 4,Teststationsgatan 4,Testilä,Testmo,TestBike Finland,10,24.840319,60.16582
+4,3,Testiasema 4,Teststation 4,Teststation 4,Testiasemantie 4,Teststationsgatan 4,Testilä,Testmo,TestBike Finland,1dd0,24.8ff0319,60.1658f2
+5,5,Testiasema 5,Teststation 5,Teststation 5,Testiasemantie 5,Teststationsgatan 5,Testilä,Testmo,TestBike Finland,10,24.840319,60.16582
+6,6,Testiasema 6,Teststation 6,Teststation 6,Testiasemantie 6,Teststationsgatan 6,Testilä,Testmo,TestBike Finland,10,24.840319,60.16582
+7,7,Testiasema 7,Teststation 7,Teststation 7,Testiasemantie 7,Teststationsgatan 7,Testilä,Testmo,TestBike Finland,10,24.840319,60.16582
+,,,,,,,
+8,8,Testiasema 8,Teststation 8,Teststation 8,Testiasemantie 8,Teststationsgatan 8,Testilä,Testmo,TestBike Finland,10,24.840319,60.16582
+9,9,Testiasema 9,Teststation 9,Teststation 9,Testiasemantie 9,Teststationsgatan 9,Testilä,Testmo,TestBike Finland,10,24.840319,60.16582
+10,10,Testiasema 10,Teststation 10,Teststation 10,Testiasemantie 10,Teststationsgatan 10,Testilä,Testmo,TestBike Finland,10,24.840319,60.16582
+

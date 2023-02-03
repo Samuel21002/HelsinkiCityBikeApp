@@ -10,7 +10,7 @@ Journeys
 {% block content %}
 
 <div class="columns is-full-hd">
-    <div class="column is-8 has_margin vh-50" id="id_map">
+    <div class="column is-8 has_margin" id="id_map">
     </div>
     <div class="measure center column is-4-widescreen is-one-thirds-tablet mh-30">
 
@@ -59,15 +59,22 @@ Journeys
                     </div>
                 </div>
             </div>
-
-            <button type="submit" id="id_submit" class="b ph4 pv2 input-reset ba b--black bg-transparent grow pointer mv3 f6 dib">Search</button> 
-            <output class="pa2" id="errors"></output>
+            
+            <div class="is-flex">
+                <div class="is-align-self-center">
+                    <button type="submit" id="id_submit" class="b ph4 pv2 input-reset ba b--black bg-transparent grow pointer mv3 f6 dib">Search</button> 
+                </div>
+                <div class="is-align-self-center ml-2">
+                    <div class="is-align-self-center mt-5 ml-2" id="load-wheel"></div>
+                    <output class="pa2" id="errors"></output>
+                </div>
+            </div>
         </form>
     </div>
 </div>
 
 <!-- Search Results -->
-<div class="columns is-full-hd mh-40">
+<div class="columns is-full-hd mh-40 pt2">
     <div class="column is-10 pa0">
         <ul class="table w-100 ba b--black-20" cellspacing="0">
             <div class="table-container h5" style="overflow-y:scroll" id="search_result_div">
@@ -108,8 +115,8 @@ Journeys
         <h5>Your search matches {{search_results_count}} results</h5>
     </div>
     {% else %}
-    <div class="column is-4">
-        <p class="text-center">No journeys</p>
+    <div id="search_matches" class="column is-4">
+        <h5>No results</h5>
     </div>
     {% endif %}
 </div>
