@@ -71,7 +71,7 @@ function validation() {
     const duration = document.getElementsByName('duration')
     
     const conditionsArray = [
-        Boolean(!journey_dep_station.value && !journey_ret_station.value),
+        // Boolean(!journey_dep_station.value && !journey_ret_station.value),
         Boolean(distance[0].value < 10),
         Boolean(Number(distance[1].value) < Number(distance[0].value)),
         Boolean(duration[0].value < 10), 

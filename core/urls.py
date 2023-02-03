@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import load_index_page, login, logout, celery_progress_terminate
+from django.contrib.auth.decorators import login_required
 
 app_name='core'
 

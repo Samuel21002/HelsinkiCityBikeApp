@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['helsinkicitybikeapp.azurewebsites.net', '127.0.0.1']
 CSRF_TRUSTED_ORIGINS = ['https://helsinkicitybikeapp.azurewebsites.net', 'http://helsinkicitybikeapp.azurewebsites.net']
@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'core',
     'csvimport',
     'journeys',
-    "querystring_tag",
+    'querystring_tag',
     'stations'
 ]
 
@@ -55,13 +55,18 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'helsinkiCityBikeApp.middleware.RejectAnonymousUsersMiddleware'
 ]
+
+
+# Ignores the Csrf errors during test runs
+if DEBUG == False:
+    MIDDLEWARE.append('django.middleware.csrf.CsrfViewMiddleware')
 
 ROOT_URLCONF = 'helsinkiCityBikeApp.urls'
 
@@ -88,17 +93,7 @@ WSGI_APPLICATION = 'helsinkiCityBikeApp.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 # Production
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'db-hcbapp',
-#         'USER': 'zameezy@dc-hcbapp',
-#         'PASSWORD': os.getenv('DB_PASSWORD'),
-#         'HOST': os.getenv('DB_HOST'),
-#         'PORT': '5432',
-#         'OPTIONS': {"sslmode":"require"}
-#     }
-# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -129,6 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LOGIN_URL= "/login/"
+LOGOUT_URL= "/logout/"
 LOGOUT_REDIRECT_URL = "/login/"
 
 # Internationalization
@@ -144,15 +140,16 @@ USE_TZ = True
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'my_cache_table',
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
     }
 }
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_DIRS = [

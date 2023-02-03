@@ -1,6 +1,7 @@
 # HelsinkiCityBikeApp
 
 ![Helsinki city bikes](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Helsinki_city_bikes_station_2016_kauppatori.jpg/640px-Helsinki_city_bikes_station_2016_kauppatori.jpg)
+
 *"Helsinki city bikes station 2016 kauppatori" by Olimar is licensed under CC BY-SA 4.0.*
 
 Helsinki City Bike App is a pre-assignment for Solita's Dev Academy. 
@@ -31,7 +32,7 @@ Contains a form for uploading CSV data.
 The app utilizes Celery to read the CSV data as a background task and Redis as its message broker (Default URL: 127.0.0.1:6379). 
 You have to specify whether you are uploading CSV-data containing Journey- or Station objects. 
 
-"Safe create" will wait for the whole file to be read before adding any data to the database. Using Django's bulk_create(), it once finished, it will add the data to the database with only one query. This is especially good if you have large files you want to go through faster but it will not add anything to the database while the upload is ongoing.
+"Safe create" will wait for the whole file to be read before adding any data to the database. Using Django's bulk_create(), once finished, it will add the data to the database with only one query. This is especially good if you have large files you want to go through faster but it will not add anything to the database while the upload is ongoing.
 
 ### Journeys:
 Contains the search functionality for searching journeys. The station names, timeframe, duration and distance can be specified in order to specify a search. The search matches will be displayed, are sortable and upon clicking on a journey, it will be displayed on the map above. Journey information includes:
@@ -141,5 +142,19 @@ Before you run the project, make sure Redis, Celery and the virtual environment 
 In case there is an issue with the SECRET_KEY not being found, you can generate one here *'https://djecrety.ir/*(https://djecrety.ir/). Add the generated key to the *settings.py* -file by replacing the old SECRET_KEY variable as such:
 
 eg. `SECRET_KEY = '<Your generated key here>'`
+
+## Testing 
+
+You can run all project tests at once by typing 'python3 manage.py test' from the same folder manage.py is located in.
+To run specific tests for an app, type 'python3 manage.py test (*appname*).tests.(*TestClass*).(*methodname*)' eg. *'python3 manage.py csvimport test_csvimport_load_page'*. Alternatively you can leave out the method name to run all tests within a test class.
+The tests are meant to test the basic functionalities, like authentication, Django views (backend), Celery, returning JSON data to the front end plus page interaction using Selenium.
+
+Selenium uses '*chromedriver*' as its engine so you need Chrome installed on your local computer. Also make sure you are running tests in the Virtual Environment with Redis running. Also in settings.py, make sure Debug is *'True'* as it temporarily disables the CSRF middleware for testing purposes.
+
+Note! If you run all tests in one run, there might be some errors in the amount of database entries present in the database.
+
+# Final thoughts
+
+As the first beta-version of helsinkiCityBikeApp, this works pretty well, although more thorough testing will be necessary! Also, page performance seems to be an issue with large amounts of data, especially when deployed to Azure. However i am very pleased with the results!
 
 ENJOY!

@@ -1,12 +1,12 @@
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from celery.result import AsyncResult
+from csvimport.models import Csv
+from django.contrib import messages
 from django.contrib.auth import authenticate, login as user_login, logout
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib import messages
+from django.http import JsonResponse
+from django.shortcuts import render, HttpResponseRedirect, redirect
+from django.urls import reverse
 from helsinkiCityBikeApp.celery import app
-from csvimport.models import Csv
-from celery.result import AsyncResult
-
 import json
 
 def load_index_page(request):
@@ -61,14 +61,20 @@ def login(request):
                     user_login(request, user)
                     return redirect(valuenext)
                 else:
-                    return redirect('/')
+                    return HttpResponseRedirect(reverse('core:index'))
+            else:
+                messages.error(request, "Login failed, verify your username and password.")
         else:
-            messages.error(request, "Login failed, verify your username and password.")
-            return redirect('/')
+            messages.error(request, "Form is not valid. Check your values and try again.")
+            return HttpResponseRedirect(reverse('core:index'))
     else:
         form = AuthenticationForm()
     return render(request, 'core/login.html', {'form':form })
 
 def logout(request):
-    logout(request)
-    return redirect('core:login')
+    try:
+        logout(request)
+        del request.session['user']
+    except:
+        return HttpResponseRedirect(reverse('core:login'))
+    return HttpResponseRedirect(reverse('core:login'))

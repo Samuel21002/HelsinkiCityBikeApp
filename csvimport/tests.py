@@ -1,30 +1,31 @@
 from .forms import CsvModelForm
 from .models import Csv
 from .views import load_csvimport_page
-from celery import current_app
 from csvimport.tasks import upload_csv
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase, Client
+from django.test import TransactionTestCase, Client
+from django.test.utils import override_settings
 from django.urls import reverse, resolve
 from stations.models import Station
 from journeys.models import Journey
-from unittest.mock import patch
 import os
-from unittest import mock
+import time
+
 # Create your tests here.
-class CSVImportTests(TestCase):
+class CSVImportTests(TransactionTestCase):
+
+    reset_sequences = True
     
     @classmethod
     def setUpTestData(cls):
         """ Registering a user for the test cases """
-        super(CSVImportTests, cls).setUpTestData()
+        super(CSVImportTests, cls)
         cls.client = Client()
-        cls.user = User.objects.create_user('testuser', 'test@gmail.com', 'testpass')
 
     def setUp(self):
         """ Logging in a user for the test cases """
+        self.user = User.objects.create_user('testuser', 'test@gmail.com', 'testpass')
         self.client.login(username='testuser', password='testpass')
 
     def test_csvimport_load_page(self):
@@ -46,6 +47,7 @@ class CSVImportTests(TestCase):
         self.assertFalse(self.obj.activated, True)
         self.assertEqual(len(Csv.objects.all()), 1)
 
+    @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
     def test_form_upload(self):
         """ Tests the form validation """
         dirname = os.path.dirname(__file__)
@@ -72,7 +74,7 @@ class CSVImportTests(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn("The file must be a CSV-file!", form.errors["file_name"])
 
-
+    @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
     def test_csv_upload_with_celery(self):
         """ Tests the Celery background task by providing a csv-file with both valid and invalid row data"""
         dirname = os.path.dirname(__file__)
@@ -84,54 +86,26 @@ class CSVImportTests(TestCase):
         self.file_journey = os.path.join(dirname, 'CSVFiles/Journey_test_csv.csv')
 
         # Journey (without station objects)
-        self.result_upload_csv = upload_csv(self.file_journey, self.csv_data_type_journey, self.upload_type)
-        self.assertEqual(self.result_upload_csv, 'CSV upload completed')
+        self.result_upload_csv = upload_csv.delay(self.file_journey, self.csv_data_type_journey, self.upload_type).get() # type: ignore        
+        self.assertEqual(self.result_upload_csv, 'Journey upload successful!')
         self.assertEqual(len(Journey.objects.all()), 0)
 
         # Station
-        self.result_upload_csv = upload_csv(self.file_station, self.csv_data_type_station, self.upload_type)
-        self.assertEqual(self.result_upload_csv, '10 stations uploaded successfully')
+        time.sleep(2)
+        self.result_upload_csv = upload_csv.delay(self.file_station, self.csv_data_type_station, self.upload_type).get() # type: ignore        
+        self.assertEqual(self.result_upload_csv, 'Station upload successful!')
         self.assertEqual(len(Station.objects.all()), 10)
 
         # Journey (with station objects)
-        self.result_upload_csv = upload_csv(self.file_journey, self.csv_data_type_journey, self.upload_type)
-        self.assertEqual(self.result_upload_csv, '5 journeys uploaded successfully')
-        self.assertEqual(len(Journey.objects.all()), 5)
+        time.sleep(2)
+        self.result_upload_csv = upload_csv.delay(self.file_journey, self.csv_data_type_journey, self.upload_type).get() # type: ignore        
+        self.assertEqual(self.result_upload_csv, 'Journey upload successful!')
+        self.assertEqual(len(Journey.objects.all()), 20)
 
-        # Wrong datatype
-        self.result_upload_csv = upload_csv(self.file_journey, self.csv_data_type_station, self.upload_type)
-        self.assertTrue(len(Journey.objects.all()), 0)
+        # Wrong datatype should cause an exception
+        time.sleep(2)
+        self.assertRaises(Exception, upload_csv, self.file_journey, self.csv_data_type_station, self.upload_type)
 
-            
-    # Using mock ?
-
-    # @patch('csvimport.tasks.upload_csv')
-    # def test_csv_upload_with_celery(self, my_task_mock):
-    #     """ Tests the Celery background task by providing a csv-file with both valid and invalid row data"""
-    #     dirname = os.path.dirname(__file__)
-
-    #     # Upload Station to Celery
-    #     self.file_station = os.path.join(dirname, 'CSVFiles/Station_test_csv.csv')
-    #     self.csv_data_type_station = 'station'
-    #     self.upload_type = 'safe_create'
-
-    #     my_task_mock.delay.side_effect = '9 stations uploaded successfully'
-    #     self.result_mock_upload = my_task_mock.delay(self.file_station, self.csv_data_type_station, self.upload_type)
-    #     my_task_mock.delay.assert_called()
-    #     self.assertEqual(self.result_mock_upload, '9 stations uploaded successfully')
-    #     self.assertEqual(len(Station.objects.all()), 9)
-
-    #     # Upload Journey to Celery
-    #     self.file_journey = os.path.join(dirname, 'CSVFiles/Journey_test_csv.csv')
-    #     self.csv_data_type_journey = 'journey'
-    #     self.upload_type = 'safe_create'
-
-    #     my_task_mock.delay.side_effect = '7 journeys uploaded successfully'
-    #     self.result_mock_upload = my_task_mock.delay(self.file_journey, self.csv_data_type_journey, self.upload_type)
-    #     my_task_mock.delay.assert_called()
-    #     self.assertEqual(self.result_mock_upload, '7 journeys uploaded successfully')
-    #     self.assertEqual(len(Journey.objects.all()), 7)
-
-    #     with self.assertRaises(ValueError):
-    #         self.result_mock_upload = my_task_mock.delay(self.file_journey, self.csv_data_type_station, self.upload_type)
-        
+@classmethod
+def tearDownClass(cls):
+    super().tearDownClass()

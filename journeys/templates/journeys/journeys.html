@@ -60,7 +60,7 @@ Journeys
                 </div>
             </div>
 
-            <button type="submit" id="id_submit" class="b ph4 pv2 input-reset ba b--black bg-transparent grow pointer mv3 f6 dib" disabled="true">Search</button> 
+            <button type="submit" id="id_submit" class="b ph4 pv2 input-reset ba b--black bg-transparent grow pointer mv3 f6 dib">Search</button> 
             <output class="pa2" id="errors"></output>
         </form>
     </div>
@@ -70,11 +70,9 @@ Journeys
 <div class="columns is-full-hd mh-40">
     <div class="column is-10 pa0">
         <ul class="table w-100 ba b--black-20" cellspacing="0">
-            <div class="table-container h5" style="overflow-y:scroll">
+            <div class="table-container h5" style="overflow-y:scroll" id="search_result_div">
                 {%if search_results %}
-                <tbody class="lh-copy">
                     {% include 'journeys/search_partial.html' %}
-                </tbody>
                 {%endif%}
             </div>
         </ul>
@@ -84,17 +82,17 @@ Journeys
     <div id="div_ordering" class="column is-2 ma3 tc bb bt b--black-20 my0">
         <h2 class="h2">Order Results By:</h2>
         <ul class="fa4 fw5">
-            <li><a href="{% querystring discard 'order_by' %}&order_by=departure_time&direction={{direction}}">
+            <li><a id="order_by_dep" href="{% querystring discard 'order_by' %}&order_by=departure_time&direction={{direction}}">
                 <i class="fa-solid fa-person-biking"></i>&nbsp; Departure</li></a>
-            <li><a href="{% querystring discard 'order_by' %}&order_by=return_time&direction={{direction}}">
+            <li><a id="order_by_ret" href="{% querystring discard 'order_by' %}&order_by=return_time&direction={{direction}}">
                 <i class="fa-solid fa-person-biking"></i>&nbsp; Return</li></a>
-            <li><a href="{% querystring discard 'order_by' %}&order_by=departure_station_name&direction={{direction}}">
+            <li><a id="order_by_dep_stat" href="{% querystring discard 'order_by' %}&order_by=departure_station_name&direction={{direction}}">
                 <i class="fa-solid fa-location-dot"></i>&nbsp; Departure Station</li></a>
-            <li><a href="{% querystring discard 'order_by' %}&order_by=return_station_name&direction={{direction}}">
+            <li><a id="order_by_ret_stat" href="{% querystring discard 'order_by' %}&order_by=return_station_name&direction={{direction}}">
                 <i class="fa-solid fa-location-dot"></i>&nbsp; Return Station</li></a>
-            <li><a href="{% querystring discard 'order_by' %}&order_by=covered_distance&direction={{direction}}">
+            <li><a id="order_by_dist" href="{% querystring discard 'order_by' %}&order_by=covered_distance&direction={{direction}}">
                 <i class="fa-solid fa-people-arrows"></i>&nbsp; Covered Distance <small>(m)</small></li></a>
-            <li><a href="{% querystring discard 'order_by' %}&order_by=duration&direction={{direction}}">
+            <li><a id="order_by_dur" href="{% querystring discard 'order_by' %}&order_by=duration&direction={{direction}}">
                 <i class="fa-solid fa-hourglass-half"></i>&nbsp; Duration</li></a>
         </ul>
     </div>
@@ -106,7 +104,7 @@ Journeys
     <div class="column is-8">
         {% include 'journeys/pagination.html' %}
     </div>
-    <div class="column is-4">
+    <div id="search_matches" class="column is-4">
         <h5>Your search matches {{search_results_count}} results</h5>
     </div>
     {% else %}

@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import load_journeys_page, get_journey_info, search_journey
 
+
 app_name='journeys'
 
 urlpatterns = [

@@ -1,10 +1,10 @@
 <!-- Search result partial -->
 
 <!-- "The Header" -->
-<div class="columns ba b--black-10 pt2 h3-is-desktop h4-is-tablet h6-is-mobile center tc">
-    <li class="column is-3-widescreen is-1-tablet is-mobile fw2 center h1"><small>Journey</small></li>
+<div class="columns ba b--black-10 pt2 h3-is-desktop h4-is-tablet h6-is-mobile center tc" id="search_header">
+    <li class="column is-3-widescreen is-2-tablet is-mobile fw2 center h1"><small>Journey</small></li>
     <li class="column is-1-widescreen is-1-tablet is-mobile fw2 center h1"><small>Departure</small></li>
-    <li class="column is-1-widescreen is-2-tablet is-mobile fw2 center h1"><small>Return</small></li>
+    <li class="column is-1-widescreen is-1-tablet is-mobile fw2 center h1"><small>Return</small></li>
     <li class="column is-2-widescreen is-2-tablet is-mobile fw2 center h1"><small>Dep. Station</small></li>
     <li class="column is-2-widescreen is-2-tablet is-mobile fw2 center h1"><small>Ret. Station</small></li>
     <li class="column is-1-widescreen is-1-tablet is-mobile fw2 center h1"><small>Dist.(m)</small></li>
@@ -13,17 +13,17 @@
 
 <!-- Every search match is rendered here -->
 {%for result in page_obj %}
-    <div class="columns ba b--black-10 pt2 h3-is-desktop h4-is-tablet h6-is-mobile center tc">
+    <div class="search_result columns ba b--black-10 pt2 h3-is-desktop h4-is-tablet h6-is-mobile center tc" name="journey" >
         <li class="column is-3-widescreen is-2-tablet is-mobile pr3 f6 f6-ns fw6 ">
             <i class="fa-solid fa-map"></i>&nbsp; <a href="#id_map" onclick="get_journey({{result.id}})">
             {{result.departure_station_name}} <i class="fa-solid fa-arrow-right-long w-10"></i> {{result.return_station_name}}
             </a>
         </li>
-        <li class="column is-1-widescreen is-1-tablet is-mobile fw3 measure-narrow center ph1 pv1">{{result.departure_time}}</li>
-        <li class="column is-1-widescreen is-1-tablet is-mobile fw3 measure-narrow center ph1 pv1">{{result.return_time}}</li>
-        <li class="column is-2-widescreen is-2-tablet is-mobile fw3 measure-narrow center ph1 pv1">{{result.departure_station_name}}</li>
-        <li class="column is-2-widescreen is-2-tablet is-mobile fw3 measure-narrow center ph1 pv1">{{result.return_station_name}}</li>
-        <li class="column is-1-widescreen is-1-tablet is-mobile fw3 measure-narrow center ph1 pv1">{{result.covered_distance|default:"-"}}</li>
-        <li class="column is-1-widescreen is-1-tablet is-mobile fw3 measure-narrow center ph1 pv1">{{result.duration_format}}</li>
+        <li class="column is-1-widescreen is-1-tablet is-mobile fw3 measure-narrow center ph1 pv1" name="dep_time">{{result.departure_time}}</li>
+        <li class="column is-1-widescreen is-1-tablet is-mobile fw3 measure-narrow center ph1 pv1" name="ret_time">{{result.return_time}}</li>
+        <li class="column is-2-widescreen is-2-tablet is-mobile fw3 measure-narrow center ph1 pv1" name="dep_stat">{{result.departure_station_name}}</li>
+        <li class="column is-2-widescreen is-2-tablet is-mobile fw3 measure-narrow center ph1 pv1" name="ret_stat">{{result.return_station_name}}</li>
+        <li class="column is-1-widescreen is-1-tablet is-mobile fw3 measure-narrow center ph1 pv1" name="cov_dist">{{result.covered_distance|default:"-"}}</li>
+        <li class="column is-1-widescreen is-1-tablet is-mobile fw3 measure-narrow center ph1 pv1" name="duration">{{result.duration_format}}</li>
     </div>
     {%endfor%}

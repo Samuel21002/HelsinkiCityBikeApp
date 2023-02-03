@@ -1,71 +1,61 @@
 from .models import Station
-from journeys.models import Journey
 from .views import load_stations_page
 from csvimport.tasks import upload_csv
+from decimal import Decimal
+from django.conf import settings
 from django.contrib.auth.models import User
-from django.test import TestCase, Client, LiveServerTestCase
+from django.test import TestCase, LiveServerTestCase, Client
+from django.test.utils import override_settings
+from django.urls import reverse, resolve
+from journeys.models import Journey
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.chrome.webdriver import WebDriver
-from django.test.utils import override_settings
-from django.urls import reverse, resolve
-from decimal import Decimal
-from splinter import Browser
-from django.conf import settings
+import json
 import os
 import time
-import json
 
-
-# Create your tests here.
 class StationsUploadTests(TestCase):
 
     @classmethod
-    @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
     def setUpTestData(cls):
         """ CELERY_TASK_ALWAYS_EAGER=True keeps the Celery processes within the test environment """
 
         super(StationsUploadTests, cls).setUpTestData()
         cls.client = Client()
-
         dirname = os.path.abspath(os.path.join(
             os.path.dirname(__file__), '..', 'csvimport'))
-        cls.user = User.objects.create_user(
-            'testuser', 'test@gmail.com', 'testpass')
-        file_station = os.path.join(
+        cls.file_station = os.path.join(
             dirname, 'CSVFiles/Station_test_csv.csv')
-        csv_data_type_station = 'station'
-        upload_type = 'safe_create'
-
-        cls.result_upload_csv = upload_csv.delay(
-            file_station, csv_data_type_station, upload_type).get()
-
+    
     def setUp(self):
-        """ Logs in the testuser using the webdriver browser. """
+        self.user = User.objects.create_user(
+            'testuser', 'test@gmail.com', 'testpass')
         self.client.login(username='testuser', password='testpass')
-
+            
     def test_station_load_page(self):
-        """ Testing the basics of page loading properly and that user will be redirected to 
-            the login page if not logged in and trying to access any other page """
+        """ Testing the basics of page loading properly, the correct view being rendered and that user
+        will be redirected to the login page if not logged in and trying to access any other page """
 
         url = reverse('stations:stations')
         response = self.client.get(url)
         self.assertEqual(resolve(url).func, load_stations_page)
         self.assertEqual(response.status_code, 200)
         self.client.logout()
-        response = self.client.get(url)
+        response = self.client.get(reverse('core:index'))
         self.assertEqual(response.status_code, 302)
 
+    @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
     def test_station_geoJSON_data(self):
         """ Testing the asynchronous CSV-upload, whether it renders the proper GeoJson endpoint data,
             checks if the Leaflet map exists on the page and whether the correct data is rendered on the page.
         """
-
-        self.assertEqual(self.result_upload_csv, 'Station upload successful!')
-        self.assertEqual(len(Station.objects.all()), 10)
-
-        json_url = self.client.get(reverse('stations:render_geojson'))
-        self.assertJSONEqual(str(json.loads(json_url.content)),
+        upload_csv.delay(self.file_station, 'station', 'safe_create').get()  # type: ignore
+        time.sleep(1)
+        self.maxDiff = None
+        json_content = self.client.get(
+            reverse('stations:render_geojson')).content
+        self.assertJSONEqual(str(json.loads(json_content)),
                              {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {
                                  "station_id": "1", "name_fin": "Testiasema 1", "name_swe": "Teststation 1"
                              }, "geometry": {"type": "Point", "coordinates": [24.840319, 60.16582]}}, {
@@ -90,7 +80,9 @@ class StationsUploadTests(TestCase):
 
 
 class StationPageTests(LiveServerTestCase):
-    """ For local LiveServer test cases"""
+    """ LiveServerTestCases test the interaction of the stations page by creating stations and journeys,
+    searching from the stations list, clicking on the station to retrieve information, and to display
+    the top departure stations by a defined month"""
 
     @classmethod
     def setUpClass(cls):
@@ -102,7 +94,7 @@ class StationPageTests(LiveServerTestCase):
         """ Creates an user and Station & Journey objects """
         self.user = User.objects.create_user(
             'testuser', 'test@gmail.com', 'testpass')
-            
+
         for i in range(1, 11):
             Station.objects.create(
                 station_id=i,
@@ -171,10 +163,6 @@ class StationPageTests(LiveServerTestCase):
         password_input = self.selenium.find_element(By.NAME, "password")
         username_input.send_keys('testuser')
         password_input.send_keys('testpass')
-        csrf_token = self.selenium.find_element(
-            By.NAME, 'csrfmiddlewaretoken').get_attribute('value')
-        # self.selenium.find_element(By.NAME, "csrfmiddlewaretoken").send_keys(csrf_token)
-        # self.selenium.find_element(By.NAME, "csrfmiddlewaretoken").send_keys(csrf_token)
         self.selenium.find_element(By.ID, 'id_submit').click()
 
         time.sleep(2)

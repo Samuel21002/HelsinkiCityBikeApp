@@ -73,13 +73,13 @@ def search_journey(request):
 
     try:
         order_by = request.GET.get('order_by', 'departure_station_name')  # Ordering criteria from the order_by query
-        sort_direction = request.GET.get('direction', 'desc')   # Sorting criteria (asc or desc)
-        if sort_direction == 'asc':
-            ordering = f'{order_by}'
-            sort_direction = 'desc'
-        else:
+        sort_direction = request.GET.get('direction', 'asc')   # Sorting criteria (asc or desc)
+        if sort_direction == 'desc':
             ordering = f'-{order_by}'
             sort_direction = 'asc'
+        else:
+            ordering = f'{order_by}'
+            sort_direction = 'desc'
         
         journey_dep_station = request.GET.get("journey_dep_station", '')  # Departure station
         journey_ret_station = request.GET.get("journey_ret_station", '')  # Return station
@@ -102,43 +102,43 @@ def search_journey(request):
 
         # If a search result is not found in the cache, make a new query to the db
         if result is None:
-            print("New cache")
+            print("Saving query to cache")
 
             # Nullchecks to see if the user is searching for either a departure or return station or both 
-            if bool(journey_dep_station) | bool(journey_ret_station):
-                
-                if journey_dep_station:
-                    multiple_q &= Q(departure_station_name__icontains=journey_dep_station)
-                if journey_ret_station:
-                    multiple_q &= Q(return_station_name__icontains=journey_ret_station)
+            #if bool(journey_dep_station) | bool(journey_ret_station):
+            
+            if journey_dep_station:
+                multiple_q &= Q(departure_station_name__icontains=journey_dep_station)
+            if journey_ret_station:
+                multiple_q &= Q(return_station_name__icontains=journey_ret_station)
 
-                """ Applies the date range filtering departure and / or return station results.
-                    If no upper bound is selected, datetime now is selected.
+            """ Applies the date range filtering departure and / or return station results.
+                If no upper bound is selected, datetime now is selected.
 
-                    If no upper bound is selected for duration or distance, the maximum value from the database
-                    is selected. "10" is the minimum value set for distance and duration.
-                """
-                if dates: 
-                    multiple_q &= Q(departure_time__date__gte=dates[0] if dates[0] else datetime(2020, 1, 1, 00, 00, 00, 0).date())
-                    multiple_q &= Q(return_time__date__lte=dates[1] if dates[1] else datetime.now().date())
+                If no upper bound is selected for duration or distance, the maximum value from the database
+                is selected. "10" is the minimum value set for distance and duration.
+            """
+            if dates: 
+                multiple_q &= Q(departure_time__date__gte=dates[0] if dates[0] else datetime(2020, 1, 1, 00, 00, 00, 0).date())
+                multiple_q &= Q(return_time__date__lte=dates[1] if dates[1] else datetime.now().date())
+            
+            if distance:
+                multiple_q &= Q(covered_distance__gte=distance[0] if distance[0] else 10)
+                multiple_q &= Q(covered_distance__lte=distance[1] if distance[1] else max_distance)
                 
-                if distance:
-                    multiple_q &= Q(covered_distance__gte=distance[0] if distance[0] else 10)
-                    multiple_q &= Q(covered_distance__lte=distance[1] if distance[1] else max_distance)
-                    
-                if duration:
-                    multiple_q &= Q(duration__gte=duration[0] if duration[0] else 10)
-                    multiple_q &= Q(duration__lte=duration[1] if duration[1] else max_duration)
+            if duration:
+                multiple_q &= Q(duration__gte=duration[0] if duration[0] else 10)
+                multiple_q &= Q(duration__lte=duration[1] if duration[1] else max_duration)
 
-                # Database Query passed to the filter.
-                result = Journey.objects.filter(multiple_q).defer(
-                    'id', 'departure_station_id', 'return_station_id').distinct()
-                
-                # Sets the new search into the temporary cache for 5 minutes (300sec)
-                cache.set('search_query_' + query, result, 300)
+            # Database Query passed to the filter.
+            result = Journey.objects.filter(multiple_q).defer(
+                'id', 'departure_station_id', 'return_station_id').distinct()
+            
+            # Sets the new search into the temporary cache for 5 minutes (300sec)
+            cache.set('search_query_' + query, result, 300)
         
         else:
-            print("Old cache")
+            print("Getting old query from cache")
         result = result.order_by(ordering) 
 
         # Pagination

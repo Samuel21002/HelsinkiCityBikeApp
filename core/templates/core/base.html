@@ -138,6 +138,7 @@
     </main>
 
     <!-- Footer, including the loader and button for toggling the loader div -->
+    {%if user.is_authenticated %}
     <footer class="w-100 pa1">
       <div class="loader_btn" style="position:fixed; bottom:0; right:0;">
         <button class="button-five ma3" onclick="toggle_loader()"><i class="fa-solid fa-upload"></i></button>
@@ -150,10 +151,11 @@
         {%else%}
           <span class="has-background-white-ter">You have no uploads.</span>
       {%endif%}
-      </div>
-    </footer>
-
-    <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
+    </div>
+  </footer>
+  
+  <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
+  {%endif%}
 
   </body>
 </html>

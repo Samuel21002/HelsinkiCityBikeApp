@@ -12,11 +12,10 @@ class CoreTests(TestCase):
         cls.client = Client()
         cls.user = User.objects.create_user('testuser', 'test@gmail.com', 'testpass')
 
-    def setUp(self):
-        self.client.login(username='testuser', password='testpass')
-
     def test_login_and_index_page(self):
         """ Tests the index page, whether the correct view is returned and whether the index-page has the right content """
+      
+        self.client.login(username='testuser', password='testpass')
         url = reverse('core:index')
         response = self.client.get(url)
         self.assertEqual(resolve(url).func, load_index_page)
@@ -28,9 +27,8 @@ class CoreTests(TestCase):
 
     def test_logout(self):
         """ Tests whether the user has access to any pages after logging out and to what page user will be redirected to """
+        
         self.client.logout()
         response = self.client.get(reverse('core:index'))
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, '/login/?next=/')
-
-        

@@ -23,7 +23,7 @@ def upload_file(request):
 
     form = CsvModelForm(request.POST or None, request.FILES or None)
     upload_type = None
-    inspect = current_app.control.inspect()
+    inspect = current_app.control.inspect() # type: ignore
     workers = inspect.active()  # Checks if the Celery worker is active
 
     if request.method == 'POST':
