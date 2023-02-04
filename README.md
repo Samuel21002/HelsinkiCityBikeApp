@@ -5,10 +5,24 @@
 
 *"Helsinki city bikes station 2016 kauppatori" by Olimar is licensed under CC BY-SA 4.0.*
 
-Helsinki City Bike App is a pre-assignment for Solita's Dev Academy. 
-The project utilizes Pythons Django -framework in the back-end along with Celery and Redis for handling background tasks. The frontend utilises Bulma and Tachyons CSS-libraries and JavaScript.
-
 Helsinki City Bike App is a web app where you can upload CSV-data along with searching, adding, displaying and modifying citybike journeys and stations.
+This project is a pre-assignment for Solita's Dev Academy. 
+
+The project utilizes Pythons Django -framework in the back-end along with Celery and Redis for handling background tasks. The frontend utilises Bulma and Tachyons CSS-libraries and JavaScript. I choose Django because of its ability to scale for larger projects, pleasant workflow and easy maintainability.
+
+___
+###Deployed app on Azure:
+[https://helsinkicitybikeapp.azurewebsites.net/](https://helsinkicitybikeapp.azurewebsites.net/)
+
+Log In With:
+Username: citybikeuser
+Password: citybik3sar3aw3som3
+
+You are able to visit the admin page to perform CRUD operations but do not obviously have superuser privileges. 
+
+*NOTE! CSV Uploading will not work in this deployed version as i did not get the Redis / Celery to work yet.* 
+___
+
 
 ### Apps
 The primary features consists of a CSV-upload page, Stations view page, Journeys page and the Admin panel. 
@@ -29,6 +43,8 @@ The project is divided into "apps" and they run on the localhost (with an *'http
 So in other words: eg. *'http://127.0.0.1:8000/stations'* would run the features / page belonging to the projects Station -app from its corresponding folder within the project.
 
 ### CSVImport:
+
+![CSVUpload Form View](https://i.postimg.cc/MZgST1YX/HCBAPP-CSVUPLOAD.png)
 Contains a form for uploading CSV data.
 
 The app utilizes Celery to read the CSV data as a background task and Redis as its message broker (Default URL: 127.0.0.1:6379). 
@@ -38,18 +54,24 @@ You have to specify whether you are uploading CSV-data containing Journey- or St
 
 Upon submitting a file, celery will take care of the uploading and validating the CSV data and fields. The status of the upload can be displayed by clicking on the green button down on the right of the page. You can also cancel your upload at any time you'd like.
 
+![CSVUpload Process](https://i.postimg.cc/x13DthVb/HCBAPP-CSVUPLOAD-2.png)
+
 ### Journeys:
-Contains the search functionality for searching journeys. The departure and return station names, a journeys timeframe, duration and distance can be specified for a more extensive search. The search matches will be displayed, are sortable and upon clicking on a journey, it will be displayed on the map above. Journey information includes:
+Contains the search functionality for searching journeys. The departure and return station names, a journeys timeframe, duration and distance can be specified for a more extensive search. The search matches will be displayed in the div, are sortable and upon clicking on a journey, it will be displayed on the map above. An arrow will indicate the gap between stations. 
+
+Single journey information includes:
 
  - Departure- and Return station
  - Departure and return time
  - Covered distance
  - Duration
 
-### Stations:
-Contains a map of all the stations in the database.
+![Journeys View](https://i.postimg.cc/pdVN7CPc/HCBAPP-JOURNEYS.png)
 
-You can narrow down the results by typing in the input box. Clicking on the stations on the list or the markers on the map, displays more information about the station, including:
+### Stations:
+Contains a map of all the stations in the database plus a search functionality for all stations.
+
+You can narrow down the results by typing in the input box. Clicking on the stations on the list or the markers on the map, displays more information about a single station, including:
 
  - Location on the map
  - Station name
@@ -62,10 +84,14 @@ You can narrow down the results by typing in the input box. Clicking on the stat
  - Top 5 most popular departure stations for journeys ending at the station
  - Filtering the calculations by month
 
+![Stations / Single station view](https://i.postimg.cc/Bn0f5sk0/HCBAPP-STATIONS.png)
+
 ### Admin panel
 
 The *'Admin panel'* is added to the navigation bar in order to manage the database more proficiently.
 You can conviniently manage (Browse, Add, Modify, Delete...) the created database objects, add new users or user groups, scroll for the background task results etc.
+
+![Admin View](https://i.postimg.cc/nVXxp3B6/HCBAPP-ADMIN-small.png)
 
 ___
 
@@ -161,7 +187,7 @@ ___
   
 2. You need to generate a SECRET_KEY as it is needed to run the project. You can generate one here *'[https://djecrety.ir/](https://djecrety.ir/)'*. Add the generated key to the *settings.py* -file by replacing the old SECRET_KEY variable as such:
 
-eg. SECRET_KEY = '<Your generated key here>'
+eg. SECRET_KEY = 'Your Key Here'
 
 3. Finally, you can run the local server by typing in *'python3 manage.py runserver'*. By default, the development version of the project runs in *'http://127.0.0.1:8000/'*(http://127.0.0.1:8000/) if nothing else has been set up in *settings.py*.
 
